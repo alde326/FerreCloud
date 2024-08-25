@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .dashboard-header {
+            background-color: #343a40;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .card {
+            margin-bottom: 30px;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .card-title {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        .card-text {
+            font-size: 16px;
+            color: #d1d1d1;
+        }
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-header">
+    <h1>Bienvenido a tu FerreCloud</h1>
+    <p class="lead">Gestiona tu aplicación desde aquí</p>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-4 col-md-6">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Usuarios</h5>
+                    <p class="card-text">Gestiona tus usuarios registrados.</p>
+                    <a href="/empleados/" class="btn btn-outline-light">Ir a Usuarios</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Inventario</h5>
+                    <p class="card-text">Administra tus productos y existencias.</p>
+                    <a href="/inventario/" class="btn btn-outline-light">Ir a Inventario</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Ventas</h5>
+                    <p class="card-text">Realiza ventas a los clientes.</p>
+                    <a href="/ventas/" class="btn btn-outline-light">Ir a Ventas</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Proveedores</h5>
+                    <p class="card-text">Consulta los proveedores asociados.</p>
+                    <a href="/proveedor/" class="btn btn-outline-light">Ir a Proveedores</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="card bg-danger text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Clientes</h5>
+                    <p class="card-text">Visualiza estadísticas y analiticas de clientes.</p>
+                    <a href="/clientes/" class="btn btn-outline-light">Ir a Analytics</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="card bg-secondary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Configuración</h5>
+                    <p class="card-text">Ajusta la configuración de la aplicación.</p>
+                    <a href="#" class="btn btn-outline-light">Ir a Configuración</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Gráfico de Ventas Mensuales</h5>
+                    <canvas id="ventasChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Top 5 Productos más Vendidos</h5>
+                    <ul class="list-group">
+                        <li class="list-group-item">Producto A - 150 vendidos</li>
+                        <li class="list-group-item">Producto B - 120 vendidos</li>
+                        <li class="list-group-item">Producto C - 110 vendidos</li>
+                        <li class="list-group-item">Producto D - 100 vendidos</li>
+                        <li class="list-group-item">Producto E - 90 vendidos</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="{% url 'salir' %}">Cerrar sesión</a>
+</div>
+
+<script>
+    // Datos para el gráfico de ventas mensuales
+    var ctx = document.getElementById('ventasChart').getContext('2d');
+    var ventasChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Ventas mensuales',
+                data: [500, 700, 900, 600, 1200, 1000],
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

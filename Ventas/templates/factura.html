@@ -1,0 +1,29 @@
+<h3>Factura {{ factura.id }}</h3>
+<p>Fecha: {{ factura.fecha }}</p>
+<p>Cliente: {{ factura.cliente.nombre }} ({{ factura.cliente.documento }})</p>
+<p>Total sin IVA: ${{ factura.total }}</p>
+<p>IVA (21%): ${{ factura.iva }}</p>
+<p>Total con IVA: ${{ factura.total_con_iva }}</p>
+<p>Observación: {{ factura.observacion }}</p>
+
+<h4>Detalles:</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Precio Unitario</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for detalle in factura.detallefactura_set.all %}
+        <tr>
+            <td>{{ detalle.producto.nombre }}</td>
+            <td>{{ detalle.cantidad }}</td>
+            <td>${{ detalle.precio_unitario }}</td>
+            <td>${{ detalle.cantidad * detalle.precio_unitario }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

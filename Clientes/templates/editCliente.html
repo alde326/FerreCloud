@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Editar cliente
+{% endblock %}
+
+{% block content %}
+    {% load custom_filters %}
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <h2 class="text-center">Crear cliente</h2>
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {{ form.nombre.label_tag }}
+                        {{ form.nombre|add_class:"form-control" }}
+                        <div class="invalid-feedback">
+                            Por favor, ingresa el nombre.
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ form.documento.label_tag }}
+                        {{ form.documento|add_class:"form-control" }}
+                        <div class="invalid-feedback">
+                            Por favor, ingresa el documento.
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ form.telefono.label_tag }}
+                        {{ form.telefono|add_class:"form-control" }}
+                        <div class="invalid-feedback">
+                            Por favor, ingresa el teléfono.
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ form.email.label_tag }}
+                        {{ form.email|add_class:"form-control" }}
+                        <div class="invalid-feedback">
+                            Por favor, ingresa el email.
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ form.direccion.label_tag }}
+                        {{ form.direccion|add_class:"form-control" }}
+                        <div class="invalid-feedback">
+                            Por favor, ingresa la dirección.
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ form.nivel.label_tag }}
+                        {{ form.nivel|add_class:"form-control" }}
+                        <div class="invalid-feedback">
+                            Por favor, ingresa el nivel.
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Guardar</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Fila para botón de volver -->
+        <div class="row mt-3">
+            <div class="col text-center">
+                <a href="{% url 'indexClientes' %}" class="btn btn-secondary">Volver a Clientes</a>
+            </div>
+        </div>
+
+    </div>
+
+
+    <script>
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                var forms = document.getElementsByClassName('needs-validation');
+                var validation = Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+{% endblock %}

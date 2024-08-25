@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Ventas
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  {% if messages %}
+    <div class="mb-4">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+  
+  <div class="mb-4">
+    <h2>Sección de Productos</h2>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Cantidad</th>
+          <th>Precio</th>
+          <th>Observaciones</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tablaProductos">
+        {% for producto in productos %}
+          <tr>
+            <td>{{ producto.id }}</td>
+            <td>{{ producto.nombre }}</td>
+            <td>{{ producto.cantidad }}</td>
+            <td>{{ producto.precio }}</td>
+            <td>
+              {% if  producto.observacion != null %}
+                {{ producto.observacion }}
+              {% else %}
+                -
+              {% endif %}
+            </td>
+            <td>
+              <input type="number" id="cantidad-{{ producto.id }}" value="1" min="1" class="form-control d-inline-block" style="width: 70px;">
+              <button class="btn btn-success" onclick="addToCart('{{ producto.id }}', '{{ producto.nombre }}', '{{ producto.precio }}', document.getElementById('cantidad-{{ producto.id }}').value)">Agregar al carrito</button>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mb-4">
+    <h2>Carrito de Compras</h2>
+    <ul class="list-group" id="cartItems">
+      <!-- Items del carrito se agregarán aquí -->
+    </ul>
+    <div class="mt-3">
+      <h4>Total a pagar: $<span id="totalPrice">0.00</span></h4>
+    </div>
+  </div>
+
+  <div class="mb-4">
+    <h2>Formulario de Contacto</h2>
+    <form action="{% url 'procesar_formulario' %}" method="post" onsubmit="addCartData()">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="documento">Documento:</label>
+        <input type="text" class="form-control" id="documento" name="documento" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" class="form-control" id="email" name="email" required>
+      </div>
+      <div class="form-group">
+        <label for="observacion">Observación:</label>
+        <textarea class="form-control" id="observacion" name="observacion" rows="3" required></textarea>
+      </div>
+      <input type="hidden" id="carrito" name="carrito">
+      <button type="submit" class="btn btn-primary">Enviar</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  let cart = [];
+  let totalPrice = 0;
+
+  function addToCart(id, name, price, cantidad) {
+    cantidad = parseInt(cantidad);
+    const existingItem = cart.find(item => item.id === id);
+    if (existingItem) {
+      existingItem.cantidad += cantidad;
+    } else {
+      cart.push({id, name, price, cantidad});
+    }
+    updateCart();
+  }
+
+  function removeFromCart(id) {
+    const existingItemIndex = cart.findIndex(item => item.id === id);
+    if (existingItemIndex !== -1) {
+      if (cart[existingItemIndex].cantidad === 1) {
+        cart.splice(existingItemIndex, 1);
+      } else {
+        cart[existingItemIndex].cantidad -= 1;
+      }
+      updateCart();
+    }
+  }
+
+  function updateCart() {
+    const cartItems = document.getElementById('cartItems');
+    cartItems.innerHTML = '';
+
+    cart.forEach(item => {
+      const li = document.createElement('li');
+      li.className = 'list-group-item d-flex justify-content-between align-items-center';
+      li.innerHTML = `${item.name} - $${item.price} x ${item.cantidad} <button class="btn btn-danger btn-sm" onclick="removeFromCart('${item.id}')">Eliminar</button>`;
+      cartItems.appendChild(li);
+    });
+
+    totalPrice = cart.reduce((sum, item) => sum + item.price * item.cantidad, 0);
+    document.getElementById('totalPrice').innerText = totalPrice.toFixed(2);
+  }
+
+  function addCartData() {
+    document.getElementById('carrito').value = JSON.stringify(cart);
+  }
+</script>
+{% endblock %}

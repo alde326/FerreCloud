@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Proveedores
+{% endblock %}
+
+{% block content %}
+<div class="container-main">
+
+    <div class="container mt-4">
+        <div class="row">
+            <h2>Lista de Proveedores</h2>
+        </div>
+
+        <!-- Fila para input y botón de búsqueda -->
+        <div class="row mb-3">
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Buscar proveedor...">
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-primary">Buscar</button>
+            </div>
+        </div>
+
+        <!-- Botón de reabastecer productos -->
+        <div class="row mb-3">
+            <div class="col">
+                <a href="{% url 'reabastecerProductos' %}" class="btn btn-primary btn-block">Reabastecer productos</a>
+            </div>
+        </div>
+
+        <div class="row">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>NIT</th>
+                        <th>Razón social</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Dirección</th>
+                        <th>Nombre de contacto</th>
+                        <th>Teléfono de contacto</th>
+                        <th>Celular</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Aquí van los datos de los empleados -->
+                    {% for proveedor in proveedores %}
+                    <tr>
+                        <td>{{ proveedor.id }}</td>
+                        <td>{{ proveedor.nit }}</td>
+                        <td>{{ proveedor.razonSolcial }}</td>
+                        <td>{{ proveedor.telefono }}</td>
+                        <td>{{ proveedor.email }}</td>
+                        <td>{{ proveedor.direccion }}</td>
+                        <td>{{ proveedor.nombreContacto }}</td>
+                        <td>{{ proveedor.celular }}</td>
+                        <td>
+                            <!-- Aquí puedes poner enlaces para editar o eliminar el empleado -->
+                            <a href="{% url 'editProveedor' proveedor.id %}" class="btn btn-sm btn-primary">Editar</a>
+                            <a href="{% url 'eliminarProveedor' proveedor.id %}" class="btn btn-sm btn-danger">Eliminar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Fila para botón de crear empleado -->
+        <div class="row">
+            <div class="col">
+                <a href="{% url 'crearProveedor' %}" class="btn btn-success">Crear Proveedor</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+{% endblock %}
+

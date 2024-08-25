@@ -1,0 +1,111 @@
+<!-- myproject/templates/base.html -->
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Título por defecto{% endblock %}</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Otros estilos CSS pueden ir aquí -->
+    <style>
+        .container-main {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #343a40;
+            padding-top: 20px;
+            flex-shrink: 0;
+        }
+
+        .sidebar a {
+            padding: 10px 15px;
+            font-size: 18px;
+            color: #fff;
+            display: block;
+            text-decoration: none;
+        }
+
+        .sidebar a:hover {
+            background-color: #495057;
+            color: #ffffff;
+        }
+
+        .sidebar .sidebar-header {
+            padding: 10px 15px;
+            background: #212529;
+            color: #fff;
+            font-size: 20px;
+            text-align: center;
+        }
+
+        .content {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        header, footer {
+            background-color: #f8f9fa;
+            padding: 10px;
+            text-align: center;
+            width: 100%;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 250px;
+            width: calc(100% - 250px);
+        }
+    </style>
+    {% block extra_head %}
+    <!-- Bloque para agregar contenido extra al head si es necesario -->
+    {% endblock %}
+</head>
+
+<body>
+
+    <div class="container-main">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                Menú
+            </div>
+            <a href="{% url 'home' %}">Inicio</a>
+            <a href="/ventas/">Ventas</a>
+            <a href="/inventario/">Inventario</a>
+            <a href="/proveedor/">Proveedores</a>
+            <a href="/clientes/">Clientes</a>
+            <a href="/empleados/">Empleados</a>
+            <a href="/empleados/">Impuestos</a>
+        </div>
+
+        <div class="content">
+            <header>
+                <h1>FerreCloud</h1>
+            </header>
+
+            <main>
+                {% block content %}
+                <!-- Contenido específico de cada página va aquí -->
+                {% endblock %}
+            </main>
+
+            <footer>
+                <p>Información de contacto: Teléfono: XXX-XXX-XXXX | Correo electrónico: info@ferreteria.com</p>
+            </footer>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Otros scripts JS pueden ir aquí -->
+</body>
+
+</html>

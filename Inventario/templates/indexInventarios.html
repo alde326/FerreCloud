@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Inventario
+{% endblock %}
+
+{% block content %}
+
+<style>
+  .selected-row {
+    background-color: #e0f7fa; /* Elige el color que prefieras */
+  }
+</style>
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col">
+      <h2>Lista de Productos</h2>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col">
+      <form method="GET" action="{% url 'product_search' %}" class="form-inline">
+        <label class="mr-2"><b>Buscar:</b></label>
+        <input type="text" name="query" placeholder="Introduce el nombre del producto" class="form-control mr-2" style="width: 200px;">
+        <input type="text" name="presentacion" placeholder="Presentación" class="form-control mr-2" style="width: 150px;">
+        <input type="text" name="proveedor" placeholder="Proveedor" class="form-control mr-2" style="width: 150px;">
+  
+        <label class="mr-2"><b>Ordenar por:</b></label>
+        <select name="order_by" class="form-control mr-2">
+          <option value="">Selecciona...</option>
+          <option value="nombre">Nombre</option>
+          <option value="presentacion">Presentación</option>
+          <option value="cantidad">Cantidad</option>
+          <option value="precio">Precio</option>
+        </select>
+  
+        <button type="submit" class="btn btn-primary">Buscar</button>
+        <div class="ml-auto">
+          <a href="{% url 'newProduct' %}" class="btn btn-secondary">Nuevo producto</a>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+
+  <div class="row mt-4">
+    <div class="col-md-8">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Presentación</th>
+            <th>Cantidad</th>
+            <th>Precio</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for producto in productos %}
+          <tr class="producto-item"
+              data-id="{{ producto.id }}"
+              data-nombre="{{ producto.nombre }}"
+              data-presentacion="{{ producto.presentacion }}"
+              data-stock-minimo="{{ producto.stockM }}"
+              data-cantidad="{{ producto.cantidad }}"
+              data-proveedor="{{ producto.proveedor }}"
+              data-observacion="{{ producto.observacion }}">
+            <td>{{ producto.id }}</td>
+            <td>{{ producto.nombre }}</td>
+            <td>{{ producto.presentacion }}</td>
+            <td>{{ producto.cantidad }}</td>
+            <td>{{ producto.precio }}</td>
+            <td>
+              <a href="{% url 'edit_product' producto.id %}" class="btn btn-warning btn-sm">Editar</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-4">
+      <h2>Detalles del Producto</h2>
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Producto Seleccionado</h5>
+          <p>ID: <span id="producto-id"></span></p>
+          <p>Nombre: <span id="producto-nombre"></span></p>
+          <p>Presentación: <span id="producto-presentacion"></span></p>
+          <p>Stock mínimo: <span id="producto-stock-minimo"></span></p>
+          <p>Cantidad Disponible: <span id="producto-cantidad"></span></p>
+          <p>Proveedor: <span id="producto-proveedor"></span></p>
+          <p>Observaciones: <span id="producto-observacion"></span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Script para manejar la selección de productos
+  document.addEventListener("DOMContentLoaded", function() {
+    const productoItems = document.querySelectorAll(".producto-item");
+
+    productoItems.forEach(item => {
+      item.addEventListener("click", function() {
+        // Quitar la clase de selección de todas las filas
+        productoItems.forEach(item => item.classList.remove("selected-row"));
+
+        // Añadir la clase de selección a la fila clicada
+        this.classList.add("selected-row");
+
+        // Actualizar los detalles del producto seleccionado
+        document.getElementById("producto-id").innerText = this.dataset.id;
+        document.getElementById("producto-nombre").innerText = this.dataset.nombre;
+        document.getElementById("producto-presentacion").innerText = this.dataset.presentacion;
+        document.getElementById("producto-stock-minimo").innerText = this.dataset.stockMinimo;
+        document.getElementById("producto-cantidad").innerText = this.dataset.cantidad;
+        document.getElementById("producto-proveedor").innerText = this.dataset.proveedor;
+        document.getElementById("producto-observacion").innerText = this.dataset.observacion;
+      });
+    });
+  });
+</script>
+
+{% endblock %}
+
