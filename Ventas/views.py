@@ -92,3 +92,4 @@ def procesar_formulario(request):
         return redirect('indexVentas')
 
     return render(request, 'indexVentas.html')
+

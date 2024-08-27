@@ -43,10 +43,10 @@ Clientes
                         <td>{{ cliente.telefono }}</td>
                         <td>{{ cliente.email }}</td>
                         <td>
-                            <!-- Aquí puedes poner enlaces para editar o eliminar el empleado -->
                             <a href="{% url 'editCliente' cliente.id %}" class="btn btn-sm btn-primary">Editar</a>
                             <a href="{% url 'eliminarCliente' cliente.id %}" class="btn btn-sm btn-danger">Eliminar</a>
-                        </td>
+                            <a href="{% url 'comprasCliente' cliente.id %}" class="btn btn-sm btn-info">Ver Compras</a>
+                        </td>                        
                     </tr>
                     {% endfor %}
                     <tr>
