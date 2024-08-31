@@ -1,29 +1,59 @@
-<h3>Factura {{ factura.id }}</h3>
-<p>Fecha: {{ factura.fecha }}</p>
-<p>Cliente: {{ factura.cliente.nombre }} ({{ factura.cliente.documento }})</p>
-<p>Total sin IVA: ${{ factura.total }}</p>
-<p>IVA (21%): ${{ factura.iva }}</p>
-<p>Total con IVA: ${{ factura.total_con_iva }}</p>
-<p>Observación: {{ factura.observacion }}</p>
+{% extends 'base.html' %}
 
-<h4>Detalles:</h4>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Producto</th>
-            <th>Cantidad</th>
-            <th>Precio Unitario</th>
-            <th>Total</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for detalle in factura.detallefactura_set.all %}
-        <tr>
-            <td>{{ detalle.producto.nombre }}</td>
-            <td>{{ detalle.cantidad }}</td>
-            <td>${{ detalle.precio_unitario }}</td>
-            <td>${{ detalle.cantidad * detalle.precio_unitario }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+{% block title %}
+Factura #{{ factura.id }}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Factura #{{ factura.id }}</h3>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <p><strong>Fecha:</strong> {{ factura.fecha }}</p>
+                    <p><strong>Cliente:</strong> {{ factura.cliente.nombre }} ({{ factura.cliente.documento }})</p>
+                </div>
+                <div class="col-md-6 text-md-right">
+                    <p><strong>Total sin IVA:</strong> ${{ factura.total }}</p>
+                    <p><strong>IVA (19%):</strong> ${{ factura.iva }}</p>
+                    <p><strong>Total con IVA:</strong> ${{ factura.total_con_iva }}</p>
+                </div>
+            </div>
+
+            {% if factura.observacion %}
+            <div class="alert alert-info">
+                <strong>Observación:</strong> {{ factura.observacion }}
+            </div>
+            {% endif %}
+
+            <h4 class="border-bottom pb-2">Detalles de la Factura</h4>
+            <table class="table table-hover mt-3">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Producto</th>
+                        <th class="text-center">Cantidad</th>
+                        <th class="text-right">Precio Unitario</th>
+                        <th class="text-right">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for detalle in factura.detallefactura_set.all %}
+                    <tr>
+                        <td>{{ detalle.producto.nombre }}</td>
+                        <td class="text-center">{{ detalle.cantidad }}</td>
+                        <td class="text-right">${{ detalle.precio_unitario }}</td>
+                        <td class="text-right">${{ detalle.total }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer text-muted text-right">
+            <p>Gracias por su compra</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

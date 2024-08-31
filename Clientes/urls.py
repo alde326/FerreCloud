@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from Ventas.views import verFactura
 
 
 urlpatterns = [
@@ -8,5 +9,5 @@ urlpatterns = [
     path('editar/<int:clienteID>/', views.editCliente, name='editCliente'),
     path('eliminar/<int:clienteID>/', views.eliminarCliente, name='eliminarCliente'),
     path('compras/<int:clienteID>/', views.comprasCliente, name='comprasCliente'),
-
+    path('fatura/<int:facturaID>/', verFactura, name='verFactura'),
 ]

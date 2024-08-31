@@ -20,6 +20,7 @@ Compras de {{ cliente.nombre }}
                     <th>IVA</th>
                     <th>Total con IVA</th>
                     <th>Observaciones</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -31,6 +32,7 @@ Compras de {{ cliente.nombre }}
                     <td>{{ factura.iva }}</td>
                     <td>{{ factura.total_con_iva }}</td>
                     <td>{{ factura.observacion }}</td>
+                    <td><a href="{% url 'verFactura' factura.id %}" class="btn btn-sm btn-info">Ver factura</a></td>
                 </tr>
                 {% empty %}
                 <tr>

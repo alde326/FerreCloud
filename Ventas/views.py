@@ -93,3 +93,17 @@ def procesar_formulario(request):
 
     return render(request, 'indexVentas.html')
 
+
+def verFactura(request, facturaID):
+    factura = Factura.objects.get(id=facturaID)  # Usar get en lugar de filter para obtener un solo objeto
+    detalle = DetalleFactura.objects.filter(factura=facturaID)
+
+    # Añadir el cálculo del total en cada detalle
+    for item in detalle:
+        item.total = item.cantidad * item.precio_unitario
+
+    return render(request, 'factura.html', {'factura': factura, 'detalle': detalle})
+
+
+
+    
