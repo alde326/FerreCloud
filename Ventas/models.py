@@ -18,6 +18,8 @@ class DetalleFactura(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField()
     precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
-    
+    devuelto = models.BooleanField(default=False) 
+    cantidad_devuelta = models.PositiveIntegerField(default=0)
+
     def __str__(self):
         return f"Detalle {self.id} - {self.producto.nombre}"

@@ -1,11 +1,12 @@
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models import F
 from .models import Factura, DetalleFactura
 from Inventario.models import Producto
 from Clientes.models import Cliente
 from django.contrib import messages
 import json
 from decimal import Decimal
+from django.contrib import messages
 
 def indexVentas(request):
     productos = Producto.objects.filter(eliminado=False)
@@ -95,15 +96,59 @@ def procesar_formulario(request):
 
 
 def verFactura(request, facturaID):
-    factura = Factura.objects.get(id=facturaID)  # Usar get en lugar de filter para obtener un solo objeto
-    detalle = DetalleFactura.objects.filter(factura=facturaID)
+    factura = get_object_or_404(Factura, id=facturaID)
+    detalles = DetalleFactura.objects.filter(factura=facturaID)
 
     # Añadir el cálculo del total en cada detalle
-    for item in detalle:
+    for item in detalles:
         item.total = item.cantidad * item.precio_unitario
 
-    return render(request, 'factura.html', {'factura': factura, 'detalle': detalle})
+    # Determinar si hay alguna cantidad devuelta
+    hay_devolucion = any(detalle.cantidad_devuelta > 0 for detalle in detalles)
 
+    return render(request, 'factura.html', {'factura': factura, 'detalles': detalles, 'hay_devolucion': hay_devolucion})
+
+
+def seleccionar_productos_devolucion(request, factura_id):
+    factura = get_object_or_404(Factura, id=factura_id)
+    detalles = factura.detallefactura_set.filter(cantidad__gt=F('cantidad_devuelta'))  # Filtrar detalles no completamente devueltos
+
+    if request.method == 'POST':
+        error_ocurrido = False
+
+        # Procesar cada detalle de la factura
+        for detalle in detalles:
+            cantidad_devolver = int(request.POST.get(f'cantidad_devolver_{detalle.id}', 0))
+            cantidad_maxima_devolver = detalle.cantidad - detalle.cantidad_devuelta
+
+            if cantidad_devolver > 0:
+                if cantidad_devolver > cantidad_maxima_devolver:
+                    messages.error(request, f'No puedes devolver más de {cantidad_maxima_devolver} unidades del producto "{detalle.producto.nombre}".')
+                    error_ocurrido = True
+                else:
+                    # Actualizar el stock del producto y la cantidad devuelta en el detalle
+                    producto = detalle.producto
+                    producto.cantidad += cantidad_devolver
+                    producto.save()
+
+                    # Actualizar la cantidad devuelta en el detalle
+                    detalle.cantidad_devuelta += cantidad_devolver
+                    detalle.save()
+
+        if not error_ocurrido:
+            messages.success(request, 'Los productos seleccionados han sido devueltos y el stock actualizado.')
+            return redirect('verFactura', facturaID=factura_id)
+
+    # Calcular la cantidad máxima que se puede devolver para cada detalle
+    detalles_con_max_devolucion = [
+        {
+            'detalle': detalle,
+            'cantidad_maxima_devolver': detalle.cantidad - detalle.cantidad_devuelta
+        }
+        for detalle in detalles
+    ]
+
+    return render(request, 'devolucion.html', {'factura': factura, 'detalles': detalles_con_max_devolucion})
 
 
     
