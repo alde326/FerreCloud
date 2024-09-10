@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Crear Orden de Reabastecimiento
+{% endblock %}
+
+{% block content %}
+    {% load custom_filters %}
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <h2 class="text-center">Crear Orden de Reabastecimiento</h2>
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    
+                    <!-- Formulario principal -->
+                    <div class="form-group">
+                        {{ form.proveedor.label_tag }}
+                        {{ form.proveedor|add_class:"form-control" }}
+                        <div class="invalid-feedback">
+                            <!-- Mensaje de error para el campo específico -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ form.fechaEsperada.label_tag }}
+                        {{ form.fechaEsperada|add_class:"form-control" }}
+                        <div class="invalid-feedback">
+                            <!-- Mensaje de error para el campo específico -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ form.credito.label_tag }}
+                        {{ form.credito|add_class:"form-control" }}
+                        <div class="invalid-feedback">
+                            <!-- Mensaje de error para el campo específico -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ form.observaciones.label_tag }}
+                        {{ form.observaciones|add_class:"form-control" }}
+                        <div class="invalid-feedback">
+                            <!-- Mensaje de error para el campo específico -->
+                        </div>
+                    </div>
+                    
+                    <h3>Detalles de Reabastecimiento</h3>
+                    
+                    <!-- Formset de reabastecimiento -->
+                    {{ formset.management_form }}
+                    
+                    <table class="table table-striped" id="formset-table">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Observaciones</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for form in formset %}
+                                <tr class="formset-row">
+                                    <td>
+                                        {{ form.producto|add_class:"form-control" }}
+                                    </td>
+                                    <td>
+                                        {{ form.cantidad|add_class:"form-control" }}
+                                    </td>
+                                    <td>
+                                        {{ form.observaciones|add_class:"form-control" }}
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger remove-form">Eliminar</button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <button type="button" id="add-form" class="btn btn-success">Agregar Producto</button>
+                    
+                    <button type="submit" class="btn btn-primary btn-block">Crear Orden de Reabastecimiento</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Fila para botón de volver -->
+        <div class="row mt-3">
+            <div class="col text-center">
+                <a href="{% url 'indexOrdenes' %}" class="btn btn-secondary">Volver a Reabastecimientos</a>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const formsetTable = document.getElementById('formset-table').getElementsByTagName('tbody')[0];
+            let formIdx = document.querySelectorAll('.formset-row').length;
+            const addFormBtn = document.getElementById('add-form');
+            
+            addFormBtn.addEventListener('click', function() {
+                const formHtml = `
+                    <tr class="formset-row">
+                        <td>
+                            <select name="form-${formIdx}-producto" class="form-control">
+                                <!-- Opciones de productos aquí -->
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" name="form-${formIdx}-cantidad" class="form-control" />
+                        </td>
+                        <td>
+                            <input type="text" name="form-${formIdx}-observaciones" class="form-control" />
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger remove-form">Eliminar</button>
+                        </td>
+                    </tr>
+                `;
+                formsetTable.insertAdjacentHTML('beforeend', formHtml);
+                formIdx++;
+            });
+
+            formsetTable.addEventListener('click', function(event) {
+                if (event.target.classList.contains('remove-form')) {
+                    event.target.closest('.formset-row').remove();
+                }
+            });
+        });
+    </script>
+{% endblock %}

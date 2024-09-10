@@ -1,8 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.template.loader import render_to_string
-from .forms import ProveedorForm  # Importa el formulario de Proveedores
+from .forms import ProveedorForm, ReabastecimientoForm, ReabastecimientoDetalleFormSet
 from .models import Proveedor, Reabastecimiento
-from Inventario.models import Producto
 from django.contrib.auth.decorators import login_required
 
 @login_required
@@ -45,5 +43,25 @@ def eliminarProveedor(request, proveedorID):
 def indexOrdenes(request):
     ordenes = Reabastecimiento.objects.filter(eliminado=False)
     return render(request, 'indexOrdenes.html', {'ordenes': ordenes})
+
+
+def crearReabastecimiento(request):
+    if request.method == 'POST':
+        form = ReabastecimientoForm(request.POST)
+        if form.is_valid():
+            proveedor = form.cleaned_data.get('proveedor')
+            formset = ReabastecimientoDetalleFormSet(request.POST, instance=form.instance, form_kwargs={'proveedor': proveedor})
+            if formset.is_valid():
+                reabastecimiento = form.save()
+                detalles = formset.save(commit=False)
+                for detalle in detalles:
+                    detalle.reabastecimiento_id = reabastecimiento
+                    detalle.save()
+                return redirect('indexOrdenes')
+    else:
+        form = ReabastecimientoForm()
+        formset = ReabastecimientoDetalleFormSet(form_kwargs={'proveedor': None})
+    
+    return render(request, 'crearReabastecimiento.html', {'form': form, 'formset': formset})
 
 

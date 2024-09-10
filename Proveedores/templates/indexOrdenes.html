@@ -25,7 +25,7 @@ Proveedores
         <!-- Botones de reabastecer productos y ver proveedores -->
         <div class="row mb-3">
             <div class="col-6">
-                <a href="#" class="btn btn-primary btn-block">Reabastecer productos</a>
+                <a href="{% url 'crearReabastecimiento' %}" class="btn btn-primary btn-block">Reabastecer productos</a>
             </div>
             <div class="col-6">
                 <a href="{% url 'indexProveedores' %}" class="btn btn-secondary btn-block">Ver Proveedores</a>
@@ -53,7 +53,7 @@ Proveedores
                         <td>{{ orden.id }}</td>
                         <td>{{ orden.fecha }}</td>
                         <td>{{ orden.proveedor }}</td>
-                        <td>migrar fecha de entrega</td>
+                        <td>{{ orden.fechaEsperada }}</td>
                         <td>{{ orden.credito }}</td>
                         <td>{{ orden.nombreContacto }}</td>
                         <td>

@@ -8,5 +8,6 @@ urlpatterns = [
     path('editar/<int:proveedorID>/', views.editProveedor, name='editProveedor'),
     path('eliminar/<int:proveedorID>/', views.eliminarProveedor, name='eliminarProveedor'),
     path('proveedores/', views.indexProveedores, name='indexProveedores'),
+    path('crear-reabastecimiento/', views.crearReabastecimiento, name='crearReabastecimiento'),
 
 ]
