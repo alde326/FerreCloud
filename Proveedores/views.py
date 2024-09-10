@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.template.loader import render_to_string
 from .forms import ProveedorForm  # Importa el formulario de Proveedores
-from .forms import ReabastecimientoForm
-from .models import Proveedor
+from .models import Proveedor, Reabastecimiento
+from Inventario.models import Producto
 from django.contrib.auth.decorators import login_required
 
 @login_required
@@ -41,16 +42,8 @@ def eliminarProveedor(request, proveedorID):
     return redirect('indexInventarios')
 
 
-def reabastecerProductos(request):
-    if request.method == 'POST':
-        form = ReabastecimientoForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('indexProveedores')
-    else:
-        form = ReabastecimientoForm()
-    
-    return render(request, 'reabastecer.html', {'form': form})
-
+def indexOrdenes(request):
+    ordenes = Reabastecimiento.objects.filter(eliminado=False)
+    return render(request, 'indexOrdenes.html', {'ordenes': ordenes})
 
 

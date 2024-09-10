@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Proveedores
+{% endblock %}
+
+{% block content %}
+<div class="container-main">
+
+    <div class="container mt-4">
+        <div class="row">
+            <h2>Lista de Proveedores</h2>
+        </div>
+
+        <!-- Fila para input y botón de búsqueda -->
+        <div class="row mb-3">
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Buscar proveedor...">
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-primary">Buscar</button>
+            </div>
+        </div>
+
+        <!-- Botones de reabastecer productos y ver proveedores -->
+        <div class="row mb-3">
+            <div class="col-6">
+                <a href="#" class="btn btn-primary btn-block">Reabastecer productos</a>
+            </div>
+            <div class="col-6">
+                <a href="{% url 'indexProveedores' %}" class="btn btn-secondary btn-block">Ver Proveedores</a>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Estado</th>
+                        <th>ID</th>
+                        <th>Fecha de la orden</th>
+                        <th>Proveedor</th>
+                        <th>Fecha de entrega</th>
+                        <th>Credito</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for orden in ordenes %}
+                    <tr>
+                        <td>Migrar estados</td>
+                        <td>{{ orden.id }}</td>
+                        <td>{{ orden.fecha }}</td>
+                        <td>{{ orden.proveedor }}</td>
+                        <td>migrar fecha de entrega</td>
+                        <td>{{ orden.credito }}</td>
+                        <td>{{ orden.nombreContacto }}</td>
+                        <td>
+                            <!-- Aquí puedes poner enlaces para editar o eliminar el empleado -->
+                            <a href="#" class="btn btn-sm btn-primary">Editar</a>
+                            <a href="#" class="btn btn-sm btn-danger">Eliminar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
+
