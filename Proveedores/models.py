@@ -10,6 +10,9 @@ class Proveedor(models.Model):
     nombreContacto = models.CharField(max_length=100)
     celular = models.CharField(max_length=20)
     eliminado = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return self.razonSolcial
 
 
 class Reabastecimiento(models.Model):

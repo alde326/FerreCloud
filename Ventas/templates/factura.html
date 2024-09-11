@@ -10,9 +10,11 @@ Factura #{{ factura.id }}
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <h3 class="mb-0">Factura #{{ factura.id }}</h3>
             <!-- Botón de devolución en la esquina superior derecha -->
-            <a href="{% url 'seleccionar_productos_devolucion' factura.id %}" class="btn btn-danger">
-                Devolución
-            </a>
+             <div>
+                <a href="{% url 'seleccionar_productos_devolucion' factura.id %}" class="btn btn-danger">Devolución</a>
+                <a href="{% url 'ver_factura_pdf' factura.id %}" class="btn btn-secondary">PDF</a>
+             </div>
+            
         </div>
         <div class="card-body">
             <div class="row mb-3">

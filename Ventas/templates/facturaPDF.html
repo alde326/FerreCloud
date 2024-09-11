@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Factura #{{ factura.id }}</title>
+    <style>
+        /* Añade estilos CSS para el formato del PDF */
+        body { font-family: DejaVu Sans, sans-serif; }
+        .container { width: 100%; margin: 0 auto; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h2 class="text-center">Factura #{{ factura.id }}</h2>
+    <p><strong>Fecha:</strong> {{ factura.fecha }}</p>
+    <p><strong>Cliente:</strong> {{ factura.cliente.nombre }} ({{ factura.cliente.documento }})</p>
+
+    <h4>Detalles de la Factura</h4>
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th class="text-center">Cantidad</th>
+                <th class="text-right">Precio Unitario</th>
+                <th class="text-right">Total</th>
+                {% if hay_devolucion %}
+                <th class="text-right">Cantidad Devuelta</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for detalle in detalles %}
+            <tr>
+                <td>{{ detalle.producto.nombre }}</td>
+                <td class="text-center">{{ detalle.cantidad }}</td>
+                <td class="text-right">${{ detalle.precio_unitario }}</td>
+                <td class="text-right">${{ detalle.total }}</td>
+                {% if hay_devolucion %}
+                <td class="text-right">{{ detalle.cantidad_devuelta }}</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p class="text-right"><strong>Total sin IVA:</strong> ${{ factura.total }}</p>
+    <p class="text-right"><strong>IVA (19%):</strong> ${{ factura.iva }}</p>
+    <p class="text-right"><strong>Total con IVA:</strong> ${{ factura.total_con_iva }}</p>
+
+    {% if factura.observacion %}
+    <p><strong>Observación:</strong> {{ factura.observacion }}</p>
+    {% endif %}
+
+    <p class="text-right">Gracias por su compra</p>
+</body>
+</html>

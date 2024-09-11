@@ -16,6 +16,12 @@
             overflow: hidden;
         }
 
+        .logo {
+        width: 100px; /* Ajusta el tamaño a tu preferencia */
+        height: auto; /* Mantén la proporción del aspecto */
+        border-radius: 15%; /* Hace que la imagen sea redonda */
+        }
+
         .sidebar {
             width: 250px;
             background-color: #343a40;
@@ -88,7 +94,7 @@
 
         <div class="content">
             <header>
-                <img src="{% static 'logoFerreCloud.jpg' %}" alt="Logo FerreCloud" />
+                <img src="{% static 'images/logoFerreCloud.jpg' %}" alt="Logo FerreCloud" class="logo" />
             </header>
 
             <main>

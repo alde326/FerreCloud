@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
+from django.template.loader import get_template
 from django.db.models import F
+from django.contrib import messages
 from .models import Factura, DetalleFactura
 from Inventario.models import Producto
 from Clientes.models import Cliente
-from django.contrib import messages
 import json
 from decimal import Decimal
-from django.contrib import messages
+from xhtml2pdf import pisa
 
 def indexVentas(request):
     productos = Producto.objects.filter(eliminado=False)
@@ -107,6 +109,39 @@ def verFactura(request, facturaID):
     hay_devolucion = any(detalle.cantidad_devuelta > 0 for detalle in detalles)
 
     return render(request, 'factura.html', {'factura': factura, 'detalles': detalles, 'hay_devolucion': hay_devolucion})
+
+
+def render_to_pdf(template_src, context_dict={}):
+    template = get_template(template_src)
+    html = template.render(context_dict)
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="factura.pdf"'
+    pisa_status = pisa.CreatePDF(html, dest=response)
+
+    if pisa_status.err:
+        return HttpResponse('Hubo un error al generar el PDF', status=500)
+    return response
+
+
+
+def verFacturaPDF(request, facturaID):
+    factura = get_object_or_404(Factura, id=facturaID)
+    detalles = DetalleFactura.objects.filter(factura=facturaID)
+
+    # Añadir el cálculo del total en cada detalle
+    for item in detalles:
+        item.total = item.cantidad * item.precio_unitario
+
+    # Determinar si hay alguna cantidad devuelta
+    hay_devolucion = any(detalle.cantidad_devuelta > 0 for detalle in detalles)
+
+    context = {
+        'factura': factura,
+        'detalles': detalles,
+        'hay_devolucion': hay_devolucion
+    }
+
+    return render_to_pdf('facturaPDF.html', context)
 
 
 def seleccionar_productos_devolucion(request, factura_id):

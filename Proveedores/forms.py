@@ -10,6 +10,9 @@ class ProveedorForm(forms.ModelForm):
 
 
 class ReabastecimientoForm(forms.ModelForm):
+    fechaEsperada = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'})
+    )
     class Meta:
         model = Reabastecimiento
         fields = ['proveedor', 'fechaEsperada', 'credito', 'observaciones']
