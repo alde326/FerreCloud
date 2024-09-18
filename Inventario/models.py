@@ -9,3 +9,6 @@ class Producto(models.Model):
     proveedor = models.ForeignKey('Proveedores.Proveedor', on_delete=models.CASCADE)
     observacion = models.CharField(max_length=100, null=True, blank=True)
     eliminado = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.nombre

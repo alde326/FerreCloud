@@ -28,6 +28,7 @@ class ReabastecimientoDetalleForm(forms.ModelForm):
         if proveedor:
             self.fields['producto'].queryset = Producto.objects.filter(proveedor=proveedor)
 
+
 ReabastecimientoDetalleFormSet = forms.inlineformset_factory(
     Reabastecimiento, 
     ReabastecimientoDetalle, 

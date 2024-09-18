@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import ProveedorForm, ReabastecimientoForm, ReabastecimientoDetalleFormSet
-from .models import Proveedor, Reabastecimiento
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from .forms import ProveedorForm, ReabastecimientoForm, ReabastecimientoDetalleFormSet
+from .models import Proveedor, Reabastecimiento, Producto
+import json
 
 @login_required
 def indexProveedores(request):
@@ -45,23 +47,43 @@ def indexOrdenes(request):
     return render(request, 'indexOrdenes.html', {'ordenes': ordenes})
 
 
+
+
 def crearReabastecimiento(request):
+    productos = list(Producto.objects.values('id', 'nombre'))  # Convertir a una lista de diccionarios
     if request.method == 'POST':
         form = ReabastecimientoForm(request.POST)
+
+        print(request.POST)
+
         if form.is_valid():
-            proveedor = form.cleaned_data.get('proveedor')
-            formset = ReabastecimientoDetalleFormSet(request.POST, instance=form.instance, form_kwargs={'proveedor': proveedor})
+            # Ahora que el formulario es válido, podemos acceder a cleaned_data
+            formset = ReabastecimientoDetalleFormSet(request.POST, instance=form.instance, form_kwargs={'proveedor': form.cleaned_data.get('proveedor')})
+            
             if formset.is_valid():
                 reabastecimiento = form.save()
-                detalles = formset.save(commit=False)
-                for detalle in detalles:
-                    detalle.reabastecimiento_id = reabastecimiento
+
+
+                for detalle_form in formset:
+                    detalle = detalle_form.save(commit=False)
+                    detalle.reabastecimiento = reabastecimiento
                     detalle.save()
-                return redirect('indexOrdenes')
+                return JsonResponse({'success': True, 'redirect_url': 'http://127.0.0.1:8000/proveedor/'})
+        else:
+            # Si el formulario principal no es válido, crea el formset sin datos
+            formset = ReabastecimientoDetalleFormSet(form_kwargs={'proveedor': None})
+    
     else:
         form = ReabastecimientoForm()
         formset = ReabastecimientoDetalleFormSet(form_kwargs={'proveedor': None})
     
-    return render(request, 'crearReabastecimiento.html', {'form': form, 'formset': formset})
+    return render(request, 'crearReabastecimiento.html', {
+        'form': form, 
+        'formset': formset,
+        'productos': json.dumps(productos)  # Serialización a JSON
+    })
+
+
+
 
 
