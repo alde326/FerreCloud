@@ -4,11 +4,13 @@ from .models import Producto
 from django.db.models import Q
 
 
+#Muestra la template de los inventarios
 def indexInventarios(request):
     productos = Producto.objects.filter(eliminado=False).exclude(cantidad=0)
     return render(request, 'indexInventarios.html', {'productos': productos})
 
 
+#Formulario para crear un nuevo producto
 def newProduct(request):
     if request.method == 'POST':
         form = ProductForm(request.POST)
@@ -21,6 +23,7 @@ def newProduct(request):
     return render(request, 'newProduct.html', {'form': form})
 
 
+#Eliminación lógica de los productos
 def eliminarProducto(request, productoID):
     producto = get_object_or_404(Producto, id=productoID)
     producto.eliminado = True
@@ -28,6 +31,7 @@ def eliminarProducto(request, productoID):
     return redirect('indexProveedor')
 
 
+#Finder de productos y filtros
 def product_search(request):
     query = request.GET.get('query', '')
     presentacion = request.GET.get('presentacion', '')
@@ -36,6 +40,7 @@ def product_search(request):
 
     filters = Q()
     
+    #Filtros que se están aplicando
     if query:
         filters &= Q(nombre__icontains=query)
     if presentacion:
@@ -45,6 +50,7 @@ def product_search(request):
     
     productos = Producto.objects.filter(filters)
     
+    #OrderBy de los productos seleccionados
     if order_by:
         productos = productos.order_by(order_by)
     
@@ -52,6 +58,7 @@ def product_search(request):
 
 
 
+#Formulario para editar productos
 def edit_product(request, product_id):
     producto = get_object_or_404(Producto, id=product_id)
     if request.method == 'POST':

@@ -5,12 +5,14 @@ from .forms import ProveedorForm, ReabastecimientoForm, ReabastecimientoDetalleF
 from .models import Proveedor, Reabastecimiento, Producto
 import json
 
+#Muestra el template de la lista de proveedores
 @login_required
 def indexProveedores(request):
     proveedores = Proveedor.objects.filter(eliminado=False)
     return render(request, 'indexProveedor.html', {'proveedores': proveedores})
 
 
+#Formulario de creación de proveedores
 def crearProveedor(request):
     if request.method == 'POST':
         form = ProveedorForm(request.POST)
@@ -23,6 +25,7 @@ def crearProveedor(request):
     return render(request, 'crearProveedor.html', {'form': form})
 
 
+#Formulario de edición de proveedores
 def editProveedor(request, proveedorID):
     proveedor = get_object_or_404(Proveedor, id=proveedorID)
     if request.method == "POST":
@@ -35,6 +38,7 @@ def editProveedor(request, proveedorID):
     return render(request, 'editProveedor.html', {'form': form})
 
 
+#Eliminación lógica de los proveedores
 def eliminarProveedor(request, proveedorID):
     proveedores = get_object_or_404(Proveedor, id=proveedorID)
     proveedores.eliminado = True
@@ -42,6 +46,7 @@ def eliminarProveedor(request, proveedorID):
     return redirect('indexInventarios')
 
 
+#Muestra las ordenes de compra generadas
 def indexOrdenes(request):
     ordenes = Reabastecimiento.objects.filter(eliminado=False)
     return render(request, 'indexOrdenes.html', {'ordenes': ordenes})
@@ -62,13 +67,12 @@ def crearReabastecimiento(request):
             
             if formset.is_valid():
                 reabastecimiento = form.save()
-
-
+                #Aquí procesar los nuevos datos del formulario
                 for detalle_form in formset:
                     detalle = detalle_form.save(commit=False)
                     detalle.reabastecimiento = reabastecimiento
                     detalle.save()
-                return JsonResponse({'success': True, 'redirect_url': 'http://127.0.0.1:8000/proveedor/'})
+                return JsonResponse({'success': True, 'redirect_url': 'http://127.0.0.1:8000/proveedor/'})  #Cambiar la ruta de redirección
         else:
             # Si el formulario principal no es válido, crea el formset sin datos
             formset = ReabastecimientoDetalleFormSet(form_kwargs={'proveedor': None})
