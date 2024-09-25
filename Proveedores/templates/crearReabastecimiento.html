@@ -10,14 +10,13 @@ Crear Orden de Reabastecimiento
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-
 <div class="container mt-4">
     <div class="row">
         <div class="col-md-8 offset-md-2">
             <h2 class="text-center">Crear Orden de Reabastecimiento</h2>
-            <form id="reabastecimiento-form" method="post" action="{% url 'crearReabastecimiento' %}" class="needs-validation" novalidate>
+            <form id="reabastecimiento-form" class="needs-validation" novalidate>
                 {% csrf_token %}
-                
+
                 <!-- Formulario principal -->
                 <div class="form-group">
                     {{ form.proveedor.label_tag }}
@@ -47,12 +46,9 @@ Crear Orden de Reabastecimiento
                         <!-- Mensaje de error para el campo específico -->
                     </div>
                 </div>
-                
+
                 <h3>Detalles de Reabastecimiento</h3>
-                
-                <!-- Formset de reabastecimiento -->
-                {{ formset.management_form }}
-                
+
                 <table class="table table-striped" id="formset-table">
                     <thead>
                         <tr>
@@ -63,26 +59,12 @@ Crear Orden de Reabastecimiento
                         </tr>
                     </thead>
                     <tbody>
-                        {% for form in formset %}
-                            <tr class="formset-row">
-                                <td>
-                                    {{ form.producto|add_class:"form-control" }}
-                                </td>
-                                <td>
-                                    {{ form.cantidad|add_class:"form-control" }}
-                                </td>
-                                <td>
-                                    {{ form.observaciones|add_class:"form-control" }}
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-danger remove-form">Eliminar</button>
-                                </td>
-                            </tr>
-                        {% endfor %}
+                        <!-- Aquí se agregarán dinámicamente los productos -->
                     </tbody>
                 </table>
+
                 <button type="button" id="add-form" class="btn btn-success">Agregar Producto</button>
-                
+
                 <button type="submit" class="btn btn-primary btn-block">Crear Orden de Reabastecimiento</button>
             </form>
         </div>
@@ -98,39 +80,81 @@ Crear Orden de Reabastecimiento
 </div>
 
 <script>
-    $(document).ready(function() {
-        const productos = JSON.parse('{{ productos|escapejs }}'); 
-        const formsetTable = $('#formset-table tbody');
-        let formIdx = $('.formset-row').length;
+    // Cambia el nombre de la variable para evitar conflicto
+    const productosData = JSON.parse('{{ productos|escapejs }}');
 
-        $('#add-form').click(function() {
-            const formHtml = `
-                <tr class="formset-row">
-                    <td>
-                        <select name="reabastecimientodetalle_set-${formIdx}-producto" class="form-control" id="reabastecimientodetalle_set-${formIdx}-producto">
-                            <option value="">---------</option>
-                            ${productos.map(producto => `<option value="${producto.id}">${producto.nombre}</option>`).join('')}
-                        </select>
-                    </td>
-                    <td>
-                        <input type="number" name="reabastecimientodetalle_set-${formIdx}-cantidad" class="form-control" id="reabastecimientodetalle_set-${formIdx}-cantidad" />
-                    </td>
-                    <td>
-                        <input type="text" name="reabastecimientodetalle_set-${formIdx}-observaciones" class="form-control" id=""reabastecimientodetalle_set-${formIdx}-observaciones" />
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-danger remove-form">Eliminar</button>
-                    </td>
-                </tr>
-            `;
-            formsetTable.append(formHtml);
-            formIdx++;
+    // Función para agregar un nuevo producto al formulario
+    function addRow() {
+        let rowHTML = `
+            <tr>
+                <td>
+                    <select name="producto" class="form-control">
+                        <option value="#">Elija un produto</option>
+                        ${productosData.map(producto => `<option value="${producto.id}">${producto.nombre}</option>`).join('')}
+                    </select>
+                </td>
+                <td><input type="number" name="cantidad" class="form-control" required></td>
+                <td><input type="text" name="observaciones" class="form-control"></td>
+                <td><button type="button" class="btn btn-danger" onclick="removeRow(this)">Eliminar</button></td>
+            </tr>
+        `;
+        $('#formset-table tbody').append(rowHTML);
+    }
+
+    // Función para eliminar una fila
+    function removeRow(button) {
+        $(button).closest('tr').remove();
+    }
+
+    // Añadir fila al hacer clic en el botón
+    $('#add-form').click(function() {
+        addRow();
+    });
+
+    // Manejar el envío del formulario
+    $('#reabastecimiento-form').submit(function(event) {
+        event.preventDefault(); // Evitar el envío tradicional del formulario
+
+        let rows = $('#formset-table tbody tr');
+        let detalles = [];
+
+        rows.each(function() {
+            let producto = $(this).find('select[name="producto"]').val();
+            let cantidad = $(this).find('input[name="cantidad"]').val();
+            let observaciones = $(this).find('input[name="observaciones"]').val();
+
+            detalles.push({ producto, cantidad, observaciones });
         });
 
-        formsetTable.on('click', '.remove-form', function() {
-            $(this).closest('.formset-row').remove();
-        });
+        let formData = {
+            proveedor: $('select[name="proveedor"]').val(),
+            fechaEsperada: $('input[name="fechaEsperada"]').val(),
+            credito: $('input[name="credito"]').val(),
+            observaciones: $('textarea[name="observaciones"]').val(),
+            detalles: detalles,
+            csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val()
+        };
 
+        fetch("{% url 'crearReabastecimiento' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Orden creada exitosamente');
+                window.location.href = data.redirect_url; // Redirigir después de crear la orden
+            } else {
+                alert('Error al crear la orden');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     });
 </script>
+
 {% endblock %}

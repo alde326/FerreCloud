@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Regimen simple
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Depuración de la seguridad social</h3>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="thead-light">
+                        <tr>
+                            <th class="text-center">Concepto</th>
+                            <th class="text-center">Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Ingresos brutos</td>
+                            <td class="text-center"> ${{ sales }} </td>
+                        </tr>
+                        <tr>
+                            <td>Total costos y deducciones</td>
+                            <td class="text-center"> ${{ costos }} </td>
+                        </tr>
+                        <tr>
+                            <!-- Calculo de ingresos depurados -->
+                            <td>Ingresos depurados</td>
+                            <td class="text-center"> $ - </td>
+                        </tr>
+                        <tr>
+                            <td>IBC 40%</td>
+                            <td class="text-center"> ${{ IBC }} </td>
+                        </tr>
+                        <tr>
+                            <td>Aportes de seguridad social del empleador (28,5% + FSP)</td>
+                            <td class="text-center">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Calculo del impuesto simple</h3>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="thead-light">
+                        <tr>
+                            <th class="text-center">Concepto</th>
+                            <th class="text-center">Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Ingresos brutos</td>
+                            <td class="text-center">-</td>
+                        </tr>
+                        <tr>
+                            <td>INCRNGO (Of. 010316 2-may-2019) no gravado</td>
+                            <td class="text-center">-</td>
+                        </tr>
+                        <tr>
+                            <td>LIQUIDACIÓN IMPUESTO SIMPLE</td>
+                            <td class="text-center">-</td>
+                        </tr>
+                        <tr>
+                            <td>Valor a pagar impuesto ICA</td>
+                            <td class="text-center">-</td>
+                        </tr>
+                        <tr>
+                            <td>Descuento por aportes de pensiones de los empleados (12%)</td>
+                            <td class="text-center">-</td>
+                        </tr>
+                        <tr>
+                            <td>Descuentos por medios electrónicos (0,5%)</td>
+                            <td class="text-center">-</td>
+                        </tr>
+                        <tr>
+                            <td>Valor a pagar simple</td>
+                            <td class="text-center">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

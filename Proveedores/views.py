@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from .forms import ProveedorForm, ReabastecimientoForm, ReabastecimientoDetalleFormSet
-from .models import Proveedor, Reabastecimiento, Producto
+from .models import Proveedor, Reabastecimiento, Producto, ReabastecimientoDetalle
 import json
 
 #Muestra el template de la lista de proveedores
@@ -54,38 +55,46 @@ def indexOrdenes(request):
 
 
 
+@csrf_exempt
 def crearReabastecimiento(request):
-    productos = list(Producto.objects.values('id', 'nombre'))  # Convertir a una lista de diccionarios
+    productos = list(Producto.objects.values('id', 'nombre'))  # Lista de productos para el formulario
+
     if request.method == 'POST':
-        form = ReabastecimientoForm(request.POST)
+        try:
+            data = json.loads(request.body)
+            proveedor = data.get('proveedor')
+            fecha_esperada = data.get('fechaEsperada')
+            credito = data.get('credito')
+            observaciones = data.get('observaciones')
+            detalles = data.get('detalles')
 
-        print(request.POST)
+            # Crear la instancia de Reabastecimiento
+            reabastecimiento = Reabastecimiento.objects.create(
+                proveedor_id=proveedor,
+                fechaEsperada=fecha_esperada,
+                credito=credito,
+                observaciones=observaciones
+            )
 
-        if form.is_valid():
-            # Ahora que el formulario es válido, podemos acceder a cleaned_data
-            formset = ReabastecimientoDetalleFormSet(request.POST, instance=form.instance, form_kwargs={'proveedor': form.cleaned_data.get('proveedor')})
-            
-            if formset.is_valid():
-                reabastecimiento = form.save()
-                #Aquí procesar los nuevos datos del formulario
-                for detalle_form in formset:
-                    detalle = detalle_form.save(commit=False)
-                    detalle.reabastecimiento = reabastecimiento
-                    detalle.save()
-                return JsonResponse({'success': True, 'redirect_url': 'http://127.0.0.1:8000/proveedor/'})  #Cambiar la ruta de redirección
-        else:
-            # Si el formulario principal no es válido, crea el formset sin datos
-            formset = ReabastecimientoDetalleFormSet(form_kwargs={'proveedor': None})
-    
+            # Guardar los detalles
+            for detalle in detalles:
+                ReabastecimientoDetalle.objects.create(
+                    reabastecimiento=reabastecimiento,
+                    producto_id=detalle['producto'],
+                    cantidad=detalle['cantidad'],
+                    observaciones=detalle.get('observaciones', '')
+                )
+
+            return JsonResponse({'success': True, 'redirect_url': 'http://127.0.0.1:8000/proveedor/'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+
     else:
         form = ReabastecimientoForm()
-        formset = ReabastecimientoDetalleFormSet(form_kwargs={'proveedor': None})
-    
-    return render(request, 'crearReabastecimiento.html', {
-        'form': form, 
-        'formset': formset,
-        'productos': json.dumps(productos)  # Serialización a JSON
-    })
+        return render(request, 'crearReabastecimiento.html', {
+            'form': form,
+            'productos': json.dumps(productos)
+        })
 
 
 
