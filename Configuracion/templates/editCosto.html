@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Editar costo
+{% endblock %}
+
+{% block content %}
+    {% load custom_filters_configuracion %}
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <h2 class="text-center">Editar costo</h2>
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {{ form.nombre.label_tag }}
+                        {{ form.nombre|add_class:"form-control" }}
+                        <div class="invalid-feedback">
+                            Por favor, ingresa el nombre.
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ form.valor.label_tag }}
+                        {{ form.valor|add_class:"form-control" }}
+                        <div class="invalid-feedback">
+                            Por favor, ingresa el valor.
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ form.fecha.label_tag }}
+                        {{ form.fecha|add_class:"form-control" }}
+                        <div class="invalid-feedback">
+                            Por favor, ingresa la fecha.
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ form.descripcion.label_tag }}
+                        {{ form.descripcion|add_class:"form-control" }}
+                        <div class="invalid-feedback">
+                            Por favor, ingresa la descripcion.
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ form.frecuente.label_tag }}
+                        {{ form.frecuente|add_class:"form-control" }}
+                        <div class="invalid-feedback">
+                            Por favor, ingresa si es frecuente.
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Guardar</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Fila para botón de volver -->
+        <div class="row mt-3">
+            <div class="col text-center">
+                <a href="{% url 'indexEmpleados' %}" class="btn btn-secondary">Volver a Empleados</a>
+            </div>
+        </div>
+
+    </div>
+    
+    <script>
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                var forms = document.getElementsByClassName('needs-validation');
+                var validation = Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+{% endblock %}

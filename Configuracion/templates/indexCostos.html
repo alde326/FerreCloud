@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Configuración
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <h2>Lista de costos de la organización</h2>
+    </div>
+
+    <!-- Fila para input y botón de búsqueda -->
+    <div class="row mb-3">
+        <div class="col">
+            <input type="text" class="form-control" placeholder="Buscar costo...">
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-primary">Buscar</button>
+        </div>
+    </div>
+
+    <!-- Fila para botón de crear costo -->
+    <div class="row">
+        <div class="col">
+            <a href="{% url 'crearCosto' %}" class="btn btn-success w-100">Crear costo</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Valor</th>
+                    <th>Fecha</th>
+                    <th>Descripción</th>
+                    <th>Frecuente</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí van los datos de los costos -->
+                {% for costo in costos %}
+                <tr>
+                    <td>{{ costo.id }}</td>
+                    <td>{{ costo.nombre }}</td>
+                    <td>{{ costo.valor }}</td>
+                    <td>{{ costo.fecha }}</td>
+                    <td>{{ costo.descripcion }}</td>
+                    <td>{{ costo.frecuente }}</td>
+                    <td>
+                        <!-- Aquí puedes poner enlaces para editar o eliminar el costo -->
+                        <a href="{% url 'editCosto' costo.id %}" class="btn btn-sm btn-primary">Editar</a>
+                        <a href="{% url 'eliminarCosto' costo.id %}" class="btn btn-sm btn-danger">Eliminar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    
+
+</div>
+{% endblock %}

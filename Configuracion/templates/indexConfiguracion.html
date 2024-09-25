@@ -1,10 +1,112 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    Regimen simple
+    Configuración
 {% endblock %}
 
 {% block content %}
+<style>
+    .config-menu-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        text-align: center;
+    }
 
+    .config-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 30px;
+    }
+
+    .config-menu {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 30px;
+    }
+
+    .config-card {
+        background-color: #ffffff;
+        border-radius: 15px;
+        width: 300px;
+        padding: 30px;
+        margin: 20px;
+        text-align: center;
+        text-decoration: none;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .config-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .config-icon {
+        font-size: 3rem;
+        color: #4CAF50;
+        margin-bottom: 20px;
+    }
+
+    .config-text h3 {
+        font-size: 1.6rem;
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .config-text p {
+        font-size: 1rem;
+        color: #777;
+        margin-bottom: 10px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .config-menu {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .config-card {
+            width: 100%;
+            max-width: 400px;
+        }
+    }
+</style>
+
+<div class="config-menu-container">
+    <h2 class="config-title">Panel de Configuración</h2>
+    <div class="config-menu">
+        <a href="{% url 'indexCostos' %}" class="config-card">
+            <div class="config-icon">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="config-text">
+                <h3>Costos</h3>
+                <p>Gestiona los costos de tus productos</p>
+            </div>
+        </a>
+
+        <a href="#" class="config-card">
+            <div class="config-icon">
+                <i class="fas fa-cogs"></i>
+            </div>
+            <div class="config-text">
+                <h3>Configuración General</h3>
+                <p>Modifica las preferencias del sistema</p>
+            </div>
+        </a>
+
+        <a href="#" class="config-card">
+            <div class="config-icon">
+                <i class="fas fa-sliders-h"></i>
+            </div>
+            <div class="config-text">
+                <h3>Parametrización</h3>
+                <p>Ajusta los parámetros del sistema</p>
+            </div>
+        </a>
+    </div>
+</div>
 {% endblock %}
-
