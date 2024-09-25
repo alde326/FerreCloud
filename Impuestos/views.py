@@ -73,6 +73,7 @@ def calculateIBC(ingresosBrutos):
 # TODO Calculate cost
 def calculateCosts(ingresosBrutos):
  
+    costs = 0
  
 
     return costs 

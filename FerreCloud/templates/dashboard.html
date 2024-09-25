@@ -10,6 +10,7 @@
     <link rel="icon" href="{% static 'images/favicon.png' %}" type="image/x-icon" />
 
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
@@ -20,6 +21,7 @@
             color: white;
             padding: 20px;
             text-align: center;
+            border-radius: 10px;
             margin-bottom: 30px;
         }
         .card {
@@ -27,25 +29,37 @@
             border: none;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
+            transition: transform 0.3s, box-shadow 0.3s;
         }
         .card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+            background-color: rgba(255, 255, 255, 0.1);
         }
         .card-body {
             padding: 20px;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
         .card-title {
-            font-size: 24px;
-            margin-bottom: 15px;
+            font-size: 20px;
+            margin-bottom: 10px;
         }
         .card-text {
-            font-size: 16px;
-            color: #d1d1d1;
+            font-size: 14px;
         }
         canvas {
             max-width: 100%;
             height: auto;
+        }
+        .list-group-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .dark-mode {
+            background-color: #2c2c2c;
+            color: #f8f9fa;
         }
     </style>
 </head>
@@ -54,6 +68,7 @@
 <div class="dashboard-header">
     <h1>Bienvenido a tu FerreCloud</h1>
     <p class="lead">Gestiona tu aplicación desde aquí</p>
+    <button onclick="toggleTheme()" class="btn btn-secondary">Cambiar Tema</button>
 </div>
 
 <div class="container">
@@ -61,7 +76,7 @@
         <div class="col-lg-4 col-md-6">
             <div class="card bg-primary text-white">
                 <div class="card-body">
-                    <h5 class="card-title">Usuarios</h5>
+                    <h5 class="card-title"><i class="fas fa-users"></i> Usuarios</h5>
                     <p class="card-text">Gestiona tus usuarios registrados.</p>
                     <a href="/empleados/" class="btn btn-outline-light">Ir a Usuarios</a>
                 </div>
@@ -70,7 +85,7 @@
         <div class="col-lg-4 col-md-6">
             <div class="card bg-success text-white">
                 <div class="card-body">
-                    <h5 class="card-title">Inventario</h5>
+                    <h5 class="card-title"><i class="fas fa-boxes"></i> Inventario</h5>
                     <p class="card-text">Administra tus productos y existencias.</p>
                     <a href="/inventario/" class="btn btn-outline-light">Ir a Inventario</a>
                 </div>
@@ -79,7 +94,7 @@
         <div class="col-lg-4 col-md-6">
             <div class="card bg-warning text-white">
                 <div class="card-body">
-                    <h5 class="card-title">Ventas</h5>
+                    <h5 class="card-title"><i class="fas fa-shopping-cart"></i> Ventas</h5>
                     <p class="card-text">Realiza ventas a los clientes.</p>
                     <a href="/ventas/" class="btn btn-outline-light">Ir a Ventas</a>
                 </div>
@@ -88,7 +103,7 @@
         <div class="col-lg-4 col-md-6">
             <div class="card bg-info text-white">
                 <div class="card-body">
-                    <h5 class="card-title">Proveedores</h5>
+                    <h5 class="card-title"><i class="fas fa-truck"></i> Proveedores</h5>
                     <p class="card-text">Consulta los proveedores asociados.</p>
                     <a href="/proveedor/" class="btn btn-outline-light">Ir a Proveedores</a>
                 </div>
@@ -97,7 +112,7 @@
         <div class="col-lg-4 col-md-6">
             <div class="card bg-danger text-white">
                 <div class="card-body">
-                    <h5 class="card-title">Clientes</h5>
+                    <h5 class="card-title"><i class="fas fa-chart-pie"></i> Clientes</h5>
                     <p class="card-text">Visualiza estadísticas y analiticas de clientes.</p>
                     <a href="/clientes/" class="btn btn-outline-light">Ir a Analytics</a>
                 </div>
@@ -106,9 +121,9 @@
         <div class="col-lg-4 col-md-6">
             <div class="card bg-secondary text-white">
                 <div class="card-body">
-                    <h5 class="card-title">Configuración</h5>
+                    <h5 class="card-title"><i class="fas fa-cogs"></i> Configuración</h5>
                     <p class="card-text">Ajusta la configuración de la aplicación.</p>
-                    <a href="#" class="btn btn-outline-light">Ir a Configuración</a>
+                    <a href="/configuracion/" class="btn btn-outline-light">Ir a Configuración</a>
                 </div>
             </div>
         </div>
@@ -128,11 +143,11 @@
                 <div class="card-body">
                     <h5 class="card-title">Top 5 Productos más Vendidos</h5>
                     <ul class="list-group">
-                        <li class="list-group-item">Producto A - 150 vendidos</li>
-                        <li class="list-group-item">Producto B - 120 vendidos</li>
-                        <li class="list-group-item">Producto C - 110 vendidos</li>
-                        <li class="list-group-item">Producto D - 100 vendidos</li>
-                        <li class="list-group-item">Producto E - 90 vendidos</li>
+                        <li class="list-group-item">Producto A <span class="badge badge-primary badge-pill">150 vendidos</span></li>
+                        <li class="list-group-item">Producto B <span class="badge badge-primary badge-pill">120 vendidos</span></li>
+                        <li class="list-group-item">Producto C <span class="badge badge-primary badge-pill">110 vendidos</span></li>
+                        <li class="list-group-item">Producto D <span class="badge badge-primary badge-pill">100 vendidos</span></li>
+                        <li class="list-group-item">Producto E <span class="badge badge-primary badge-pill">90 vendidos</span></li>
                     </ul>
                 </div>
             </div>
@@ -142,21 +157,38 @@
 </div>
 
 <script>
+    // Función para cambiar el tema oscuro/claro
+    function toggleTheme() {
+        document.body.classList.toggle('dark-mode');
+    }
+
     // Datos para el gráfico de ventas mensuales
     var ctx = document.getElementById('ventasChart').getContext('2d');
     var ventasChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago'],
             datasets: [{
                 label: 'Ventas mensuales',
-                data: [500, 700, 900, 600, 1200, 1000],
+                data: [500, 700, 900, 600, 1200, 1000, 1300, 900],
                 backgroundColor: 'rgba(54, 162, 235, 0.2)',
                 borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
+                borderWidth: 2,
+                pointBackgroundColor: 'rgba(75, 192, 192, 1)',
+                pointHoverRadius: 5
             }]
         },
         options: {
+            responsive: true,
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+                callbacks: {
+                    label: function(tooltipItem) {
+                        return 'Ventas: ' + tooltipItem.yLabel + ' unidades';
+                    }
+                }
+            },
             scales: {
                 yAxes: [{
                     ticks: {
