@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Parametros tributarios
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <h2>Lista de parametros tributarios</h2>
+    </div>
+
+    <!-- Fila para botón de crear parametro -->
+    <div class="row">
+        <div class="col">
+            <a href="{% url 'crearParametro' %}" class="btn btn-success w-100">Crear parametro tributario</a>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Porcentaje</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí van los datos de los parametros -->
+                {% for parametro in parametros %}
+                <tr>
+                    <td>{{ parametro.id }}</td>
+                    <td>{{ parametro.nombre }}</td>
+                    <td>{{ parametro.porcentaje }}</td>
+                    <td>
+                        <!-- Aquí puedes poner enlaces para editar o eliminar el parametro -->
+                        <a href="{% url 'editParametro' parametro.id %}" class="btn btn-sm btn-primary">Editar</a>
+                        <a href="{% url 'eliminarParametro' parametro.id %}" class="btn btn-sm btn-danger">Eliminar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

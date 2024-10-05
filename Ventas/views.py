@@ -4,6 +4,7 @@ from django.template.loader import get_template
 from django.db.models import F
 from django.contrib import messages
 from .models import Factura, DetalleFactura
+from Configuracion.models import Parametros
 from Inventario.models import Producto
 from Clientes.models import Cliente
 import json

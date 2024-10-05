@@ -78,33 +78,23 @@
 <div class="config-menu-container">
     <h2 class="config-title">Panel de Configuración</h2>
     <div class="config-menu">
-        <a href="{% url 'indexCostos' %}" class="config-card">
-            <div class="config-icon">
-                <i class="fas fa-dollar-sign"></i>
-            </div>
-            <div class="config-text">
-                <h3>Costos</h3>
-                <p>Gestiona los costos de tus productos</p>
-            </div>
-        </a>
-
         <a href="#" class="config-card">
             <div class="config-icon">
-                <i class="fas fa-cogs"></i>
+                <i class="fas fa-building"></i>
             </div>
             <div class="config-text">
-                <h3>Configuración General</h3>
-                <p>Modifica las preferencias del sistema</p>
+                <h3>Datos del establecimiento</h3>
+                <p>Modifica los datos generales e información</p>
             </div>
         </a>
 
-        <a href="{% url 'indexParametrizacion' %}" class="config-card">
+        <a href="{% url 'indexParametros' %}" class="config-card">
             <div class="config-icon">
-                <i class="fas fa-sliders-h"></i>
+                <i class="fas fa-archive"></i>
             </div>
             <div class="config-text">
-                <h3>Parametrización</h3>
-                <p>Ajusta los parámetros del sistema</p>
+                <h3>Regimen simple</h3>
+                <p>Ajusta los parámetros tributarios</p>
             </div>
         </a>
     </div>

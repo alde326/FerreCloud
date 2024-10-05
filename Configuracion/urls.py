@@ -17,4 +17,14 @@ urlpatterns = [
 
 
     path('reporte-costos/', views.analisis_costos, name='reporteCostos'), 
+    
+
+
+    path('parametrizacion/', views.indexParametrizacion, name='indexParametrizacion'),
+
+    path('parametros/', views.indexParametros, name='indexParametros'),
+    path('crearParametro/', views.crearParametro, name='crearParametro'),
+    path('editarParametro/<int:parametroID>/', views.editParametro, name='editParametro'), 
+    path('eliminarParametro/<int:parametroID>/', views.eliminarParametro, name='eliminarParametro'), 
+
 ]

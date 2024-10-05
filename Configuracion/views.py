@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Sum, Avg
 from django.utils import timezone
-from .models import Costos, Tipos
-from .forms import CostosForm, TipoForm
+from .models import Costos, Tipos, Parametros
+from .forms import CostosForm, TipoForm, ParametroForm
 import calendar
 import json
 
@@ -152,3 +152,53 @@ def analisis_costos(request):
     
     
     return render(request, 'analisis.html', context)
+
+
+
+#Parametrización--------------------------------------------------------------------------
+
+def indexParametrizacion(request):
+    return render(request, 'indexParametrizacion.html')
+
+
+
+
+def indexParametros(request):
+    parametros = Parametros.objects.filter(eliminado=False)
+    return render(request, 'indexParametros.html', {'parametros':parametros})
+
+
+
+
+def crearParametro(request):
+    if request.method == 'POST':
+        form = ParametroForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('indexParametros')   # Redirige a la lista de parametros
+    else:
+        form = ParametroForm()
+    return render(request, 'crearParametro.html', {'form': form})
+
+
+
+
+def editParametro(request, parametroID):
+    parametro = get_object_or_404(Parametros, id=parametroID)
+    if request.method == "POST":
+        form = ParametroForm(request.POST, instance=parametro)
+        if form.is_valid():
+            form.save()
+            return redirect('indexParametros')
+    else:
+        form = ParametroForm(instance=parametro)
+    return render(request, 'editParametro.html', {'form': form})
+
+
+
+
+def eliminarParametro(request, parametroID):
+    parametro = get_object_or_404(Parametros, id=parametroID)
+    parametro.eliminado = True
+    parametro.save()
+    return redirect('indexParametros')

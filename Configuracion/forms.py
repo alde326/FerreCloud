@@ -1,5 +1,5 @@
 from django import forms
-from .models import Costos,Tipos  # Importa el modelo de Empleado
+from .models import Costos,Tipos,Parametros
 
 class CostosForm(forms.ModelForm):
 
@@ -17,3 +17,10 @@ class TipoForm(forms.ModelForm):
     class Meta:
         model = Tipos
         fields = ['nombre']  # Campos del formulario
+
+
+class ParametroForm(forms.ModelForm):
+
+     class Meta:
+        model = Parametros
+        fields = ['nombre', 'porcentaje']    
