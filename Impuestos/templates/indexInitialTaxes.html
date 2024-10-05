@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Régimen Simple
+{% endblock %}
+
+{% block content %}
+<style>
+    .config-menu-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .config-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 30px;
+    }
+
+    .year-container {
+        background-color: #f9f9f9;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .year-header {
+        cursor: pointer;
+        font-size: 1.5rem;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        background-color: #ffffff;
+        transition: background-color 0.3s ease;
+    }
+
+    .year-header:hover {
+        background-color: #f1f1f1;
+    }
+
+    .config-menu {
+        display: none; /* Esconde el menú por defecto */
+        flex-wrap: wrap;
+        justify-content: space-between; 
+    }
+
+    .config-card {
+        background-color: #ffffff;
+        border-radius: 10px;
+        width: calc(30% - 20px); 
+        padding: 15px; 
+        margin: 10px; 
+        text-align: center;
+        text-decoration: none;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        min-width: 250px; 
+    }
+
+    .config-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .config-icon {
+        font-size: 2rem; 
+        color: #4CAF50;
+        margin-bottom: 10px; 
+    }
+
+    .config-text h3 {
+        font-size: 1.3rem; 
+        color: #333;
+        margin-bottom: 5px; 
+    }
+
+    .config-text p {
+        font-size: 0.85rem; 
+        color: #777;
+        margin-bottom: 5px; 
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .config-card {
+            width: calc(50% - 20px); 
+        }
+    }
+
+    @media (max-width: 480px) {
+        .config-card {
+            width: 100%; 
+        }
+    }
+</style>
+
+<div class="config-menu-container">
+    <h2 class="config-title">Selecciona un Bimestre</h2>
+
+    <!-- Contenedor para el año 2024 -->
+    <div class="year-container">
+        <div class="year-header" onclick="toggleMenu('menu2024')">Año 2024</div>
+        <div id="menu2024" class="config-menu">
+            <form method="post" action="#">
+                {% csrf_token %}
+                <button type="submit" name="bimestre" value="1" class="config-card">
+                    <div class="config-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="config-text">
+                        <h3>Enero - Febrero</h3>
+                        <p>Calcula el régimen simple para el primer bimestre</p>
+                    </div>
+                </button>
+
+                <button type="submit" name="bimestre" value="2" class="config-card">
+                    <div class="config-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="config-text">
+                        <h3>Marzo - Abril</h3>
+                        <p>Calcula el régimen simple para el segundo bimestre</p>
+                    </div>
+                </button>
+
+                <button type="submit" name="bimestre" value="3" class="config-card">
+                    <div class="config-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="config-text">
+                        <h3>Mayo - Junio</h3>
+                        <p>Calcula el régimen simple para el tercer bimestre</p>
+                    </div>
+                </button>
+
+                <button type="submit" name="bimestre" value="4" class="config-card">
+                    <div class="config-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="config-text">
+                        <h3>Julio - Agosto</h3>
+                        <p>Calcula el régimen simple para el cuarto bimestre</p>
+                    </div>
+                </button>
+
+                <button type="submit" name="bimestre" value="5" class="config-card">
+                    <div class="config-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="config-text">
+                        <h3>Septiembre - Octubre</h3>
+                        <p>Calcula el régimen simple para el quinto bimestre</p>
+                    </div>
+                </button>
+
+                <button type="submit" name="bimestre" value="6" class="config-card">
+                    <div class="config-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="config-text">
+                        <h3>Noviembre - Diciembre</h3>
+                        <p>Calcula el régimen simple para el sexto bimestre</p>
+                    </div>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Puedes agregar más contenedores de años aquí si es necesario -->
+</div>
+
+<script>
+    function toggleMenu(menuId) {
+        const menu = document.getElementById(menuId);
+        menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+    }
+</script>
+
+{% endblock %}

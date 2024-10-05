@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from Ventas.models import Factura
+from Configuracion.models import Costos
 from django.db.models import Sum
 from django.utils import timezone
 from datetime import datetime
@@ -7,6 +8,8 @@ import calendar
 
 
 
+def index(request):
+    return render(request, 'indexinitialTaxes.html')
 
 
 # TODO Make index template with all the information
@@ -14,7 +17,9 @@ def indexTaxes(request):
 
     ingresosBrutos = calculateSales()
     IBC = calculateIBC(ingresosBrutos)
-    costos = 0
+    costos = calculateCostos()
+
+    ingresosDepurados = ingresosBrutos - costos
 
     salud = calculateSalud(IBC)
     pension = calculatePension(IBC)
@@ -24,15 +29,21 @@ def indexTaxes(request):
     aportes = salud + pension + cajaDeCompensacion
 
 
-    return render(request, 'indexTaxes.html', {'sales':ingresosBrutos, 'costos':costos, 'IBC': IBC, 'aportes':aportes, 'salud':salud, 'pension':pension, 'cajaDeCompensacion':cajaDeCompensacion, 'ARL':ARL, 'aportes':aportes })
+    return render(request, 'indexTaxes.html', {
+        'sales':ingresosBrutos, 'costos':costos,
+        'IBC': IBC,
+        'aportes':aportes,
+        'salud':salud, 
+        'pension':pension, 
+        'cajaDeCompensacion':cajaDeCompensacion, 
+        'ARL':ARL, 'aportes':aportes , 
+        'ingresosDepurados':ingresosDepurados })
 
 
 
 
 # TODO Calculate sales
 def calculateSales():
-    
-    sales = 0
 
     # Obtener la fecha actual
     fecha_actual = timezone.now()
@@ -104,6 +115,42 @@ def calculateNomine():
     return nomine 
 
 
+def calculateCostos():
+
+    # Obtener la fecha actual
+    fecha_actual = timezone.now()
+    mes_actual = fecha_actual.month
+    año_actual = fecha_actual.year
+    
+    # Definir los rangos bime nsuales
+    if mes_actual in [1, 2]:
+        inicio_rango = datetime(año_actual, 1, 1)
+        # Obtener el último día de febrero según el año actual (28 o 29 días)
+        fin_rango = datetime(año_actual, 2, calendar.monthrange(año_actual, 2)[1], 23, 59, 59)
+    elif mes_actual in [3, 4]:
+        inicio_rango = datetime(año_actual, 3, 1)
+        fin_rango = datetime(año_actual, 4, 30, 23, 59, 59)
+    elif mes_actual in [5, 6]:
+        inicio_rango = datetime(año_actual, 5, 1)
+        fin_rango = datetime(año_actual, 6, 30, 23, 59, 59)
+    elif mes_actual in [7, 8]:
+        inicio_rango = datetime(año_actual, 7, 1)
+        fin_rango = datetime(año_actual, 8, 31, 23, 59, 59)
+    elif mes_actual in [9, 10]:
+        inicio_rango = datetime(año_actual, 9, 1)
+        fin_rango = datetime(año_actual, 10, 31, 23, 59, 59)
+    elif mes_actual in [11, 12]:
+        inicio_rango = datetime(año_actual, 11, 1)
+        fin_rango = datetime(año_actual, 12, 31, 23, 59, 59)
+
+    # Filtrar facturas dentro del rango
+    costos = Costos.objects.filter(
+        fecha__range=[inicio_rango, fin_rango]
+    ).aggregate(valorcitos=Sum('valor'))
+    
+    # Retornar el total de costos o 0 si no hay costos
+    return costos['valorcitos'] if costos['valorcitos'] else 0
+    
 
 
 # TODO Calculate taxes
