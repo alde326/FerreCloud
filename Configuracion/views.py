@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Sum, Avg
-from django.utils.dateparse import parse_date
-from django.http import JsonResponse
-import json
+from django.utils import timezone
 from .models import Costos, Tipos
 from .forms import CostosForm, TipoForm
+import calendar
+import json
 
 
 
@@ -118,33 +118,37 @@ def eliminarTipo(request, tipoID):
 
 
 
-def reporteCostos(request):
-    # Inicializamos el queryset con los costos no eliminados
+def analisis_costos(request):
+    # Obtener la fecha actual y calcular el primer día del mes
+    today = timezone.now().date()
+    start_of_month = today.replace(day=1)
+
+    # Obtener todos los costos no eliminados
     costos = Costos.objects.filter(eliminado=False)
 
-    # Filtros por fechas
-    fecha_inicio = request.GET.get('fecha_inicio')
-    fecha_fin = request.GET.get('fecha_fin')
+    # Resumen de costos por tipo
+    costos_por_tipo = costos.values('tipo__nombre').annotate(total=Sum('valor'))
 
-    if fecha_inicio and fecha_fin:
-        costos = costos.filter(fecha__range=[fecha_inicio, fecha_fin])
+    # Resumen de costos por mes
+    costos_por_mes = costos.filter(fecha__gte=start_of_month).values('fecha__month').annotate(total=Sum('valor'))
 
-    # Calcular estadísticas de los costos filtrados
-    total_costos = costos.aggregate(total=Sum('valor'))
-    promedio_costos = costos.aggregate(promedio=Avg('valor'))
+    # Crear un diccionario para los costos por mes
+    costos_mensuales = {calendar.month_name[i]: 0 for i in range(1, 13)}
+    for costo in costos_por_mes:
+        costos_mensuales[calendar.month_name[costo['fecha__month']]] = float(costo['total'])
 
-    # Preparar datos para el gráfico
-    fechas = costos.values_list('fecha', flat=True)
-    valores = costos.values_list('valor', flat=True)
+    # Convertir los datos a JSON, asegurándonos de que los valores sean flotantes
+    costos_por_tipo_json = json.dumps([
+        {'tipo__nombre': tipo['tipo__nombre'], 'total': float(tipo['total'])}
+        for tipo in costos_por_tipo
+    ])
+    costos_mensuales_json = json.dumps(costos_mensuales)
 
     context = {
         'costos': costos,
-        'total_costos': total_costos,
-        'promedio_costos': promedio_costos,
-        'fecha_inicio': fecha_inicio,
-        'fecha_fin': fecha_fin,
-        'fechas': json.dumps(list(fechas)),
-        'valores': json.dumps(list(valores)),
+        'costos_por_tipo_json': costos_por_tipo_json,
+        'costos_mensuales_json': costos_mensuales_json,
     }
-
-    return render(request, 'reporteCostos.html', context)
+    
+    
+    return render(request, 'analisis.html', context)

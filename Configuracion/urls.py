@@ -16,5 +16,5 @@ urlpatterns = [
     path('eliminartipo/<int:tipoID>/', views.eliminarTipo, name='eliminarTipo'), 
 
 
-    path('reporte-costos/', views.reporteCostos, name='reporteCostos'), 
+    path('reporte-costos/', views.analisis_costos, name='reporteCostos'), 
 ]
