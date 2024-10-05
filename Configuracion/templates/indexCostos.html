@@ -45,17 +45,18 @@
         </div>
     </div>
 
-    <!-- Fila para botón de crear costo -->
-    <div class="row">
-        <div class="col">
-            <a href="{% url 'crearCosto' %}" class="btn btn-success w-100">Crear costo</a>
+    <div>
+        <!-- Fila para botones -->
+        <div class="row">
+            <div class="col">
+                <a href="{% url 'crearCosto' %}" class="btn btn-success w-100">Crear costo</a>  <!-- Botón verde -->
+            </div>
+            <div class="col">
+                <a href="{% url 'reporteCostos' %}" class="btn btn-primary w-100">Reporte</a>  <!-- Botón azul -->
+            </div>
         </div>
     </div>
-    <!-- <div class="row"></div>
-        <div class="col">
-            <a href="{% url 'reporteCostos' %}" class="btn btn-success w-100">reporte</a>
-        </div>
-    </div> -->
+    
 
     <div class="row">
         <table class="table">
@@ -63,10 +64,10 @@
                 <tr>
                     <th>ID</th>
                     <th>Nombre</th>
+                    <th>Tipo</th>
                     <th>Valor</th>
                     <th>Fecha</th>
                     <th>Descripción</th>
-                    <th>Frecuente</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -76,10 +77,10 @@
                 <tr>
                     <td>{{ costo.id }}</td>
                     <td>{{ costo.nombre }}</td>
+                    <td>{{ costo.tipo }}</td>
                     <td>{{ costo.valor }}</td>
                     <td>{{ costo.fecha }}</td>
                     <td>{{ costo.descripcion }}</td>
-                    <td>{{ costo.frecuente }}</td>
                     <td>
                         <!-- Aquí puedes poner enlaces para editar o eliminar el costo -->
                         <a href="{% url 'editCosto' costo.id %}" class="btn btn-sm btn-primary">Editar</a>
