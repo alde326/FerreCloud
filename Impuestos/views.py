@@ -14,9 +14,17 @@ def indexTaxes(request):
 
     ingresosBrutos = calculateSales()
     IBC = calculateIBC(ingresosBrutos)
-    costos = calculateCosts(ingresosBrutos)
+    costos = 0
 
-    return render(request, 'indexTaxes.html', {'sales': ingresosBrutos, 'costos': costos, 'IBC': IBC })
+    salud = calculateSalud(IBC)
+    pension = calculatePension(IBC)
+    cajaDeCompensacion = calculateCaja(IBC)
+    ARL = 0 
+
+    aportes = salud + pension + cajaDeCompensacion
+
+
+    return render(request, 'indexTaxes.html', {'sales':ingresosBrutos, 'costos':costos, 'IBC': IBC, 'aportes':aportes, 'salud':salud, 'pension':pension, 'cajaDeCompensacion':cajaDeCompensacion, 'ARL':ARL, 'aportes':aportes })
 
 
 
@@ -31,7 +39,7 @@ def calculateSales():
     mes_actual = fecha_actual.month
     año_actual = fecha_actual.year
     
-    # Definir los rangos bimensuales
+    # Definir los rangos bime nsuales
     if mes_actual in [1, 2]:
         inicio_rango = datetime(año_actual, 1, 1)
         # Obtener el último día de febrero según el año actual (28 o 29 días)
@@ -69,16 +77,23 @@ def calculateIBC(ingresosBrutos):
 
 
 
-
-# TODO Calculate cost
-def calculateCosts(ingresosBrutos):
- 
-    costs = 0
- 
-
-    return costs 
+# TODO Calculate heath
+def calculateSalud(IBC):
+    salud = float(IBC) / 100 * 8.5
+    return salud
 
 
+
+# TODO Calculate pesión
+def calculatePension(IBC):
+    pension = float(IBC) / 100 * 12
+    return pension
+
+
+# TODO Calculate caja de compensación familiar
+def calculateCaja(IBC):
+    caja = float(IBC) / 100 * 4
+    return caja
 
 
 # TODO Calculate nomine

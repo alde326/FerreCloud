@@ -153,7 +153,8 @@ def seleccionar_productos_devolucion(request, factura_id):
 
         # Procesar cada detalle de la factura
         for detalle in detalles:
-            cantidad_devolver = int(request.POST.get(f'cantidad_devolver_{detalle.id}', 0))
+            cantidad_devolver_str = request.POST.get(f'cantidad_devolver_{detalle.id}', '0')
+            cantidad_devolver = int(cantidad_devolver_str) if cantidad_devolver_str.isdigit() else 0
             cantidad_maxima_devolver = detalle.cantidad - detalle.cantidad_devuelta
 
             if cantidad_devolver > 0:
