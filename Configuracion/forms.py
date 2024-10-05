@@ -9,4 +9,4 @@ class CostosForm(forms.ModelForm):
 
     class Meta:
         model = Costos
-        fields = ['nombre', 'valor', 'fecha', 'descripcion', 'frecuente', 'eliminado']  # Campos del formulario
+        fields = ['nombre', 'valor', 'fecha', 'descripcion', 'eliminado']  # Campos del formulario
