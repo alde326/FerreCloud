@@ -10,6 +10,31 @@
         <h2>Lista de costos de la organización</h2>
     </div>
 
+    <div class="row mb-3">
+        <form method="GET" class="form-inline">
+            <div class="col">
+                <label for="fecha_inicio">Desde:</label>
+                <input type="date" class="form-control" name="fecha_inicio" value="{{ request.GET.fecha_inicio }}">
+            </div>
+            <div class="col">
+                <label for="fecha_fin">Hasta:</label>
+                <input type="date" class="form-control" name="fecha_fin" value="{{ request.GET.fecha_fin }}">
+            </div>
+            <div class="col">
+                <label for="tipo">Tipo:</label>
+                <select name="tipo" class="form-control">
+                    <option value="">Todos</option>
+                    {% for t in tipos %}
+                    <option value="{{ t.id }}" {% if request.GET.tipo == t.id %}selected{% endif %}>{{ t.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+            </div>
+        </form>
+    </div>
+
     <!-- Fila para input y botón de búsqueda -->
     <div class="row mb-3">
         <div class="col">
@@ -26,6 +51,11 @@
             <a href="{% url 'crearCosto' %}" class="btn btn-success w-100">Crear costo</a>
         </div>
     </div>
+    <!-- <div class="row"></div>
+        <div class="col">
+            <a href="{% url 'reporteCostos' %}" class="btn btn-success w-100">reporte</a>
+        </div>
+    </div> -->
 
     <div class="row">
         <table class="table">
@@ -64,6 +94,12 @@
         </table>
     </div>
 
+    <!-- Fila para botón de crear empleado -->
+    <div class="row">
+        <div class="col-auto">
+            <a href="{% url 'indexCostos' %}" class="btn btn-success">Ver tipos de costos</a>
+        </div>
+    </div>
     
 
 </div>

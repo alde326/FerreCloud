@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Editar costo
+Editar Tipo
 {% endblock %}
 
 {% block content %}
@@ -10,7 +10,7 @@ Editar costo
     <div class="container mt-4">
         <div class="row">
             <div class="col-md-8 offset-md-2">
-                <h2 class="text-center">Editar costo</h2>
+                <h2 class="text-center">Editar tipo de costo</h2>
                 <form method="post" class="needs-validation" novalidate>
                     {% csrf_token %}
                     <div class="form-group">
@@ -18,27 +18,6 @@ Editar costo
                         {{ form.nombre|add_class:"form-control" }}
                         <div class="invalid-feedback">
                             Por favor, ingresa el nombre.
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        {{ form.valor.label_tag }}
-                        {{ form.valor|add_class:"form-control" }}
-                        <div class="invalid-feedback">
-                            Por favor, ingresa el valor.
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        {{ form.fecha.label_tag }}
-                        {{ form.fecha|add_class:"form-control" }}
-                        <div class="invalid-feedback">
-                            Por favor, ingresa la fecha.
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        {{ form.descripcion.label_tag }}
-                        {{ form.descripcion|add_class:"form-control" }}
-                        <div class="invalid-feedback">
-                            Por favor, ingresa la descripcion.
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">Guardar</button>
@@ -49,7 +28,7 @@ Editar costo
         <!-- Fila para botón de volver -->
         <div class="row mt-3">
             <div class="col text-center">
-                <a href="{% url 'indexCostos' %}" class="btn btn-secondary">Volver a Costos</a>
+                <a href="{% url 'indexTipos' %}" class="btn btn-secondary">Volver a Tipos de costos</a>
             </div>
         </div>
 
