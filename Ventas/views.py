@@ -10,6 +10,11 @@ from Clientes.models import Cliente
 import json
 from decimal import Decimal
 from xhtml2pdf import pisa
+from django.urls import reverse
+
+
+
+
 
 def indexVentas(request):
     productos = Producto.objects.filter(eliminado=False)
@@ -108,8 +113,11 @@ def procesar_formulario(request):
                 precio_unitario=detalle['precio_unitario']
             )
 
-        # Si todo está bien, agregar un mensaje de éxito
-        messages.success(request, 'Venta realizada exitosamente y factura creada.')
+        # Construir la URL para ver la factura usando facturaID
+        url_factura = reverse('verFactura', args=[factura.id])
+
+        # Si todo está bien, agregar un mensaje de éxito con el link a la factura
+        messages.success(request, f'Venta realizada exitosamente. <a href="{url_factura}">Ver factura</a>.')
         return redirect('indexVentas')
 
     return render(request, 'indexVentas.html')
