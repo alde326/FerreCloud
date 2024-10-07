@@ -13,13 +13,30 @@ from xhtml2pdf import pisa
 
 def indexVentas(request):
     productos = Producto.objects.filter(eliminado=False)
-    return render(request, 'indexVentas.html', {'productos': productos})
+
+    # Obtén el parámetro de IVA como un objeto único
+    try:
+        iva_parametro = Parametros.objects.get(nombre="IVA")
+        iva_tasa = Decimal(iva_parametro.porcentaje) 
+    except Parametros.DoesNotExist:
+        messages.error(request, 'El parámetro IVA no está configurado.')
+        return redirect('indexVentas')
+    
+    return render(request, 'indexVentas.html', {'productos': productos, 'iva_tasa':iva_tasa})
 
 
-IVA_TASA = Decimal('0.19')
 
 
 def procesar_formulario(request):
+
+    # Obtén el parámetro de IVA como un objeto único
+    try:
+        iva_parametro = Parametros.objects.get(nombre="IVA")
+        iva_tasa = Decimal(iva_parametro.porcentaje) 
+    except Parametros.DoesNotExist:
+        messages.error(request, 'El parámetro IVA no está configurado.')
+        return redirect('indexVentas')
+
     if request.method == 'POST':
         documento = request.POST.get('documento')
         email = request.POST.get('email')
@@ -55,7 +72,7 @@ def procesar_formulario(request):
                 return redirect('indexVentas')
 
         # Calcular IVA
-        iva = total * IVA_TASA
+        iva = total * iva_tasa
         total_con_iva = total + iva
 
         # Registrar al cliente
