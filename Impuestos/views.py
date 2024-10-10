@@ -8,8 +8,14 @@ import calendar
 
 
 
+
+
+
 def index(request):
     return render(request, 'indexinitialTaxes.html')
+
+
+
 
 
 # TODO Make index template with all the information
@@ -42,6 +48,7 @@ def indexTaxes(request):
 
 
 
+
 # TODO Calculate sales
 def calculateSales():
 
@@ -50,7 +57,7 @@ def calculateSales():
     mes_actual = fecha_actual.month
     año_actual = fecha_actual.year
     
-    # Definir los rangos bime nsuales
+    # Definir los rangos bimensuales
     if mes_actual in [1, 2]:
         inicio_rango = datetime(año_actual, 1, 1)
         # Obtener el último día de febrero según el año actual (28 o 29 días)
@@ -82,9 +89,11 @@ def calculateSales():
 
 
 
+
 def calculateIBC(ingresosBrutos):
 
     return ingresosBrutos/100*40 #Formula para el IBC
+
 
 
 
@@ -95,10 +104,15 @@ def calculateSalud(IBC):
 
 
 
+
+
 # TODO Calculate pesión
 def calculatePension(IBC):
     pension = float(IBC) / 100 * 12
     return pension
+
+
+
 
 
 # TODO Calculate caja de compensación familiar
@@ -107,12 +121,18 @@ def calculateCaja(IBC):
     return caja
 
 
+
+
+
 # TODO Calculate nomine
 def calculateNomine():
     
     nomine = 0
 
     return nomine 
+
+
+
 
 
 def calculateCostos():
@@ -151,6 +171,8 @@ def calculateCostos():
     # Retornar el total de costos o 0 si no hay costos
     return costos['valorcitos'] if costos['valorcitos'] else 0
     
+
+
 
 
 # TODO Calculate taxes

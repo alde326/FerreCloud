@@ -24,14 +24,13 @@ def dashboard_view(request):
     # Top 5 productos más vendidos
     productos_vendidos = DetalleFactura.objects.values('producto__nombre').annotate(total_vendido=Sum('cantidad')).order_by('-total_vendido')[:5]
 
-    # Preparar los datos para el template
+    # Preparar los datos para JSON
     labels = [dato['month'].strftime("%b") for dato in ventas_mensuales]
     data_ventas = [dato['total_ventas'] for dato in ventas_mensuales]
     productos_top = [{'nombre': p['producto__nombre'], 'cantidad': p['total_vendido']} for p in productos_vendidos]
 
-    context = {
+    return JsonResponse({
         'labels': labels,
         'data_ventas': data_ventas,
         'productos_top': productos_top,
-    }
-    return render(request, 'tu_template.html', context)
+    })

@@ -105,7 +105,7 @@
     <div class="year-container">
         <div class="year-header" onclick="toggleMenu('menu2024')">Año 2024</div>
         <div id="menu2024" class="config-menu">
-            <form method="post" action="#">
+            <form method="post" action="{% url 'indexTaxes' %}">
                 {% csrf_token %}
                 <button type="submit" name="bimestre" value="1" class="config-card">
                     <div class="config-icon">

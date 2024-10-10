@@ -32,6 +32,7 @@ def indexVentas(request):
 
 
 
+
 def procesar_formulario(request):
 
     # Obtén el parámetro de IVA como un objeto único
@@ -123,6 +124,9 @@ def procesar_formulario(request):
     return render(request, 'indexVentas.html')
 
 
+
+
+
 def verFactura(request, facturaID):
     factura = get_object_or_404(Factura, id=facturaID)
     detalles = DetalleFactura.objects.filter(factura=facturaID)
@@ -137,6 +141,9 @@ def verFactura(request, facturaID):
     return render(request, 'factura.html', {'factura': factura, 'detalles': detalles, 'hay_devolucion': hay_devolucion})
 
 
+
+
+
 def render_to_pdf(template_src, context_dict={}):
     template = get_template(template_src)
     html = template.render(context_dict)
@@ -147,6 +154,8 @@ def render_to_pdf(template_src, context_dict={}):
     if pisa_status.err:
         return HttpResponse('Hubo un error al generar el PDF', status=500)
     return response
+
+
 
 
 
@@ -168,6 +177,9 @@ def verFacturaPDF(request, facturaID):
     }
 
     return render_to_pdf('facturaPDF.html', context)
+
+
+
 
 
 def seleccionar_productos_devolucion(request, factura_id):
