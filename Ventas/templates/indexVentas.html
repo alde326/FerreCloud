@@ -10,15 +10,19 @@ Ventas
     <div class="mb-4">
       {% for message in messages %}
         <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-          {{ message|safe }}  <!-- Aquí se agrega el filtro |safe para renderizar html-->
+          {{ message|safe }} <!-- Aquí se agrega el filtro |safe para renderizar html-->
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
       {% endfor %}
     </div>
   {% endif %}
-  
+
   <div class="mb-4">
     <h2>Sección de Productos</h2>
+    
+    <!-- Campo de búsqueda -->
+    <input type="text" id="buscarProducto" class="form-control mb-3" placeholder="Buscar producto..." onkeyup="buscarEnTabla()">
+    
     <table class="table table-bordered">
       <thead>
         <tr>
@@ -144,6 +148,20 @@ Ventas
 
   function addCartData() {
     document.getElementById('carrito').value = JSON.stringify(cart);
+  }
+
+  function buscarEnTabla() {
+    const input = document.getElementById('buscarProducto').value.toLowerCase();
+    const filas = document.querySelectorAll('#tablaProductos tr');
+
+    filas.forEach(fila => {
+      const nombreProducto = fila.querySelector('td:nth-child(2)').textContent.toLowerCase();
+      if (nombreProducto.includes(input)) {
+        fila.style.display = '';
+      } else {
+        fila.style.display = 'none';
+      }
+    });
   }
 </script>
 {% endblock %}
