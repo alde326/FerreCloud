@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,81 +7,130 @@
     <title>Inicio de Sesión</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #9f9e9f 0%, #5d5d5e 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
+            color: #fff;
         }
 
         .login-container {
-            background-color: #fff;
-            padding: 20px 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
             text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        /* Contenedor para el logo */
+        .logo {
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            width: 100px; /* Puedes ajustar el tamaño del logo */
+            border-radius: 50%;
         }
 
         .login-container h1 {
-            margin-bottom: 20px;
-            color: #333;
+            margin-bottom: 30px;
+            color: #fff;
+            font-weight: 600;
+            font-size: 24px;
         }
 
         .input-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             text-align: left;
         }
 
         .input-group label {
             display: block;
-            margin-bottom: 5px;
-            color: #333;
+            margin-bottom: 8px;
+            color: #fff;
+            font-weight: 500;
         }
 
         .input-group input {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            padding: 12px;
+            border: none;
+            border-radius: 30px;
             box-sizing: border-box;
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.3);
+            color: #fff;
+            font-size: 14px;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        .input-group input:focus {
+            background-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
         button {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: none;
-            border-radius: 5px;
+            border-radius: 30px;
             background-color: #007bff;
             color: white;
             font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.2s;
         }
 
         button:hover {
             background-color: #0056b3;
+            transform: translateY(-2px);
         }
 
         p {
-            margin-top: 15px;
-            color: #666;
+            margin-top: 20px;
+            color: #e0e0e0;
+            font-size: 14px;
         }
 
         p a {
-            color: #007bff;
+            color: #ffcc00;
             text-decoration: none;
         }
 
         p a:hover {
             text-decoration: underline;
         }
-    </style>
 
+        /* Extra Animations */
+        .login-container h1 {
+            animation: fadeInDown 1s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="login-container">
+        <!-- Contenedor del logo -->
+        <div class="logo">
+            <img src="{% static 'images/logoFerreCloud.jpg' %}" alt="Logo FerreCloud" class="logo" />
+        </div>
         <h1>Inicio de Sesión</h1>
         <form method="POST">
             {% csrf_token %}
@@ -94,7 +144,7 @@
             </div>
             <button type="submit">Iniciar Sesión</button>
         </form>
-        <p>¿No tienes una cuenta? contactate con el administrador</p>
+        <p>¿No tienes una cuenta? <a href="#">Contacta al administrador</a></p>
     </div>
 </body>
 </html>
