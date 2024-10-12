@@ -1,16 +1,32 @@
+#Librerías
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import Sum, Avg
+from django.core.exceptions import PermissionDenied
+from django.contrib import messages
+from django.db.models import Sum
 from django.utils import timezone
-from .models import Costos, Tipos, Parametros
-from .forms import CostosForm, TipoForm, ParametroForm
 import calendar
 import json
+
+#Modelos
+from .models import Costos, Tipos, Parametros
+
+#Forms
+from .forms import CostosForm, TipoForm, ParametroForm
+
 
 
 
 
 def indexConfiguracion(request):
-    return render(request, 'indexConfiguracion.html')
+    try:
+        if not request.user.has_perm('Configuracion.view_costos'):
+            raise PermissionDenied
+        return render(request, 'indexConfiguracion.html')
+    except PermissionDenied:
+        messages.error(request, 'No tienes permiso para ver esta página.')
+        # Obtener la URL anterior o redirigir a 'home' si no hay URL previa
+        previous_url = request.META.get('HTTP_REFERER', 'home')
+        return redirect(previous_url)
 
 
 #COSTOS---------------------------

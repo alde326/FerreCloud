@@ -1,10 +1,15 @@
-from django.shortcuts import render
-from Ventas.models import Factura
-from Configuracion.models import Costos
+#Librerías
+from django.shortcuts import render, redirect
+from django.core.exceptions import PermissionDenied
+from django.contrib import messages
 from django.db.models import Sum
 from django.utils import timezone
 from datetime import datetime
 import calendar
+
+#Modelos
+from Ventas.models import Factura
+from Configuracion.models import Costos
 
 
 
@@ -12,7 +17,18 @@ import calendar
 
 
 def index(request):
-    return render(request, 'indexinitialTaxes.html')
+    try:
+        # Verifica si el usuario tiene el permiso necesario
+        if not request.user.has_perm('Impuestos.view_parametros'):
+            raise PermissionDenied
+
+        return render(request, 'indexinitialTaxes.html')
+    
+    except PermissionDenied:
+        messages.error(request, 'No tienes permiso para ver esta página.')
+        # Obtener la URL anterior o redirigir a 'home' si no hay URL previa
+        previous_url = request.META.get('HTTP_REFERER', 'home')
+        return redirect(previous_url)
 
 
 

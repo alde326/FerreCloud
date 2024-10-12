@@ -1,33 +1,49 @@
+#Librerías
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.template.loader import get_template
-from django.db.models import F
+from django.http import HttpResponse
 from django.contrib import messages
-from .models import Factura, DetalleFactura
-from Configuracion.models import Parametros
-from Inventario.models import Producto
-from Clientes.models import Cliente
-import json
+from django.urls import reverse
+from django.db.models import F
 from decimal import Decimal
 from xhtml2pdf import pisa
-from django.urls import reverse
+import json
+
+#Modelos
+from Configuracion.models import Parametros
+from .models import Factura, DetalleFactura
+from Inventario.models import Producto
+from Clientes.models import Cliente
 
 
 
 
-
+@login_required
 def indexVentas(request):
-    productos = Producto.objects.filter(eliminado=False)
-
-    # Obtén el parámetro de IVA como un objeto único
     try:
-        iva_parametro = Parametros.objects.get(nombre="IVA")
-        iva_tasa = Decimal(iva_parametro.porcentaje) 
-    except Parametros.DoesNotExist:
-        messages.error(request, 'El parámetro IVA no está configurado.')
-        return redirect('indexVentas')
+        # Verifica si el usuario tiene el permiso necesario
+        if not request.user.has_perm('Inventario.view_producto'):
+            raise PermissionDenied
+
+        productos = Producto.objects.filter(eliminado=False)
+
+        # Obtén el parámetro de IVA como un objeto único
+        try:
+            iva_parametro = Parametros.objects.get(nombre="IVA")
+            iva_tasa = Decimal(iva_parametro.porcentaje)
+        except Parametros.DoesNotExist:
+            messages.error(request, 'El parámetro IVA no está configurado.')
+            return redirect('indexVentas')
+        
+        return render(request, 'indexVentas.html', {'productos': productos, 'iva_tasa': iva_tasa})
     
-    return render(request, 'indexVentas.html', {'productos': productos, 'iva_tasa':iva_tasa})
+    except PermissionDenied:
+        messages.error(request, 'No tienes permiso para ver esta página.')
+        # Obtener la URL anterior o redirigir a 'home' si no hay URL previa
+        previous_url = request.META.get('HTTP_REFERER', 'home')
+        return redirect(previous_url)
 
 
 

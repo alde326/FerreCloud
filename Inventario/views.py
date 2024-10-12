@@ -1,13 +1,31 @@
+#Librerías
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import ProductForm
-from .models import Producto
+from django.core.exceptions import PermissionDenied
+from django.contrib import messages
 from django.db.models import Q
 
+#Forms
+from .forms import ProductForm
 
-#Muestra la template de los inventarios
+#Modelos
+from .models import Producto
+
+
+
 def indexInventarios(request):
-    productos = Producto.objects.filter(eliminado=False).exclude(cantidad=0)
-    return render(request, 'indexInventarios.html', {'productos': productos})
+    try:
+        # Verifica si el usuario tiene el permiso necesario
+        if not request.user.has_perm('Inventario.view_producto'):
+            raise PermissionDenied
+
+        productos = Producto.objects.filter(eliminado=False).exclude(cantidad=0)
+        return render(request, 'indexInventarios.html', {'productos': productos})
+    
+    except PermissionDenied:
+        messages.error(request, 'No tienes permiso para ver esta página.')
+        # Obtener la URL anterior o redirigir a 'home' si no hay URL previa
+        previous_url = request.META.get('HTTP_REFERER', 'home')
+        return redirect(previous_url)
 
 
 #Formulario para crear un nuevo producto
