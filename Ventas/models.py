@@ -9,6 +9,7 @@ class Factura(models.Model):
     iva = models.DecimalField(max_digits=10, decimal_places=2)
     total_con_iva = models.DecimalField(max_digits=10, decimal_places=2)
     observacion = models.TextField(null=True, blank=True)
+    pagoElectronico = models.BooleanField(default=False)
     
     def __str__(self):
         return f"Factura {self.id} - {self.fecha.strftime('%d/%m/%Y %H:%M:%S')}"

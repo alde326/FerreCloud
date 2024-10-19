@@ -47,6 +47,7 @@ def indexTaxes(request):
     pension = calculatePension(IBC)
     cajaDeCompensacion = calculateCaja(IBC)
     ARL = 0 
+    INCRNGO = calculateINCRNGO()
 
     aportes = salud + pension + cajaDeCompensacion
 
@@ -59,7 +60,11 @@ def indexTaxes(request):
         'pension':pension, 
         'cajaDeCompensacion':cajaDeCompensacion, 
         'ARL':ARL, 'aportes':aportes , 
-        'ingresosDepurados':ingresosDepurados })
+        'ingresosDepurados':ingresosDepurados,
+        'INCRNGO':INCRNGO })
+
+
+
 
 
 def get_bimonthly_range():
@@ -91,7 +96,10 @@ def get_bimonthly_range():
     return inicio_rango, fin_rango
 
 
-def calculate_sales():
+
+
+
+def calculateSales():
     inicio_rango, fin_rango = get_bimonthly_range()
     
     # Filtrar facturas dentro del rango
@@ -113,10 +121,12 @@ def calculateIBC(ingresosBrutos):
 
 
 
+
 # TODO Calculate heath
 def calculateSalud(IBC):
     salud = float(IBC) / 100 * 8.5
     return salud
+
 
 
 
@@ -152,17 +162,32 @@ def calculateNomine():
 
 
 def calculateCostos():
+    inicio_rango, fin_rango = get_bimonthly_range()
 
-
-
-    # Filtrar facturas dentro del rango
+    # Filtrar facturas dentro del rango excluyendo el tipo INCRNGO
     costos = Costos.objects.filter(
         fecha__range=[inicio_rango, fin_rango]
+    ).exclude(tipo_id=4).aggregate(valorcitos=Sum('valor'))
+    
+    # Retornar el total de costos o 0 si no hay costos
+    return costos['valorcitos'] if costos['valorcitos'] else 0
+
+
+
+
+
+def calculateINCRNGO():
+    inicio_rango, fin_rango = get_bimonthly_range()
+
+    # Filtrar facturas dentro del rango que solo tengan tipo INCRNGO
+    costos = Costos.objects.filter(
+        fecha__range=[inicio_rango, fin_rango],
+        tipo_id=4
     ).aggregate(valorcitos=Sum('valor'))
     
     # Retornar el total de costos o 0 si no hay costos
     return costos['valorcitos'] if costos['valorcitos'] else 0
-    
+
 
 
 
