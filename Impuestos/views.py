@@ -62,12 +62,7 @@ def indexTaxes(request):
         'ingresosDepurados':ingresosDepurados })
 
 
-
-
-
-# TODO Calculate sales
-def calculateSales():
-
+def get_bimonthly_range():
     # Obtener la fecha actual
     fecha_actual = timezone.now()
     mes_actual = fecha_actual.month
@@ -76,7 +71,6 @@ def calculateSales():
     # Definir los rangos bimensuales
     if mes_actual in [1, 2]:
         inicio_rango = datetime(año_actual, 1, 1)
-        # Obtener el último día de febrero según el año actual (28 o 29 días)
         fin_rango = datetime(año_actual, 2, calendar.monthrange(año_actual, 2)[1], 23, 59, 59)
     elif mes_actual in [3, 4]:
         inicio_rango = datetime(año_actual, 3, 1)
@@ -94,6 +88,12 @@ def calculateSales():
         inicio_rango = datetime(año_actual, 11, 1)
         fin_rango = datetime(año_actual, 12, 31, 23, 59, 59)
 
+    return inicio_rango, fin_rango
+
+
+def calculate_sales():
+    inicio_rango, fin_rango = get_bimonthly_range()
+    
     # Filtrar facturas dentro del rango
     ventas = Factura.objects.filter(
         fecha__range=[inicio_rango, fin_rango]
@@ -153,31 +153,7 @@ def calculateNomine():
 
 def calculateCostos():
 
-    # Obtener la fecha actual
-    fecha_actual = timezone.now()
-    mes_actual = fecha_actual.month
-    año_actual = fecha_actual.year
-    
-    # Definir los rangos bime nsuales
-    if mes_actual in [1, 2]:
-        inicio_rango = datetime(año_actual, 1, 1)
-        # Obtener el último día de febrero según el año actual (28 o 29 días)
-        fin_rango = datetime(año_actual, 2, calendar.monthrange(año_actual, 2)[1], 23, 59, 59)
-    elif mes_actual in [3, 4]:
-        inicio_rango = datetime(año_actual, 3, 1)
-        fin_rango = datetime(año_actual, 4, 30, 23, 59, 59)
-    elif mes_actual in [5, 6]:
-        inicio_rango = datetime(año_actual, 5, 1)
-        fin_rango = datetime(año_actual, 6, 30, 23, 59, 59)
-    elif mes_actual in [7, 8]:
-        inicio_rango = datetime(año_actual, 7, 1)
-        fin_rango = datetime(año_actual, 8, 31, 23, 59, 59)
-    elif mes_actual in [9, 10]:
-        inicio_rango = datetime(año_actual, 9, 1)
-        fin_rango = datetime(año_actual, 10, 31, 23, 59, 59)
-    elif mes_actual in [11, 12]:
-        inicio_rango = datetime(año_actual, 11, 1)
-        fin_rango = datetime(año_actual, 12, 31, 23, 59, 59)
+
 
     # Filtrar facturas dentro del rango
     costos = Costos.objects.filter(
