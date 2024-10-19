@@ -8,7 +8,7 @@ import calendar
 import json
 
 #Modelos
-from .models import Costos, Tipos, Parametros
+from .models import Costos, Tipos, Parametros, Organizacion
 
 #Forms
 from .forms import CostosForm, TipoForm, ParametroForm
@@ -218,3 +218,11 @@ def eliminarParametro(request, parametroID):
     parametro.eliminado = True
     parametro.save()
     return redirect('indexParametros')
+
+
+#Organización--------------------------------------------------------------
+
+def indexOrganizacion(request):
+    organizacion = Organizacion.objects.get()
+    return render(request, 'indexOrganizacion.html', {'parametros':organizacion})
+

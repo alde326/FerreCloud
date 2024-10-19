@@ -152,8 +152,13 @@
             </main>
 
             <footer>
-                <p>Información de contacto: Teléfono: XXX-XXX-XXXX | Correo electrónico: info@ferreteria.com</p>
+                {% if organizacion %}
+                    <p>Información de contacto: Teléfono: {{ organizacion.telefono }} | Correo electrónico: {{ organizacion.correoElectronico }}</p>
+                {% else %}
+                    <p>Información de contacto no disponible.</p>
+                {% endif %}
             </footer>
+            
         </div>
     </div>
 

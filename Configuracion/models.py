@@ -7,6 +7,8 @@ class Tipos(models.Model):
     def __str__(self):
         return self.nombre
 
+
+
 class Costos(models.Model):
     nombre = models.CharField(max_length=255)
     tipo = models.ForeignKey(Tipos, on_delete=models.CASCADE, default=1)  # Llave foránea a Tipos
@@ -17,19 +19,16 @@ class Costos(models.Model):
 
     def __str__(self):
         return self.nombre
-    
-
-# class Organizacion(models.Model):
-#     razonSocial = models.CharField(max_length=255)
-#     NIT = models.CharField(max_length=255)
-#     direccion = models.CharField(max_length=255)
-#     correoElectronico =  email = models.EmailField(max_length=254, unique=True)
-#     telefono = models.CharField(max_length=255)
 
 
-# class Organizacion(models.Model):
-#     nombre = models.CharField(max_length=255)
-#     valor =   models.CharField(max_length=255)
+
+class Organizacion(models.Model):
+    razonSocial = models.CharField(max_length=255)
+    NIT = models.CharField(max_length=255)
+    direccion = models.CharField(max_length=255)
+    correoElectronico = models.EmailField(max_length=254, unique=True)
+    telefono = models.CharField(max_length=255)
+
 
 
 class Parametros(models.Model):

@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Información Detallada de la Organización
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Título principal -->
+    <h1 class="text-center mb-4">Detalles de la Organización</h1>
+
+    <!-- Card con diseño avanzado -->
+    <div class="card border-primary shadow-lg rounded-lg">
+        <div class="card-header bg-primary text-white">
+            <h3 class="card-title"><i class="fas fa-building"></i> Información de la Organización</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <!-- Fila con iconos y texto -->
+                    <div class="mb-3">
+                        <h5><i class="fas fa-user-tie"></i> Razón Social</h5>
+                        <p class="lead">{{ parametros.razonSocial }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-id-card"></i> NIT</h5>
+                        <p class="lead">{{ parametros.NIT }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-map-marker-alt"></i> Dirección</h5>
+                        <p class="lead">{{ parametros.direccion }}</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <!-- Segunda columna con más iconos -->
+                    <div class="mb-3">
+                        <h5><i class="fas fa-envelope"></i> Correo Electrónico</h5>
+                        <p class="lead">{{ parametros.correoElectronico }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-phone-alt"></i> Teléfono</h5>
+                        <p class="lead">{{ parametros.telefono }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botón de acción (por si deseas agregar funcionalidades como editar) -->
+    <div class="text-center mt-4">
+        <a href="#" class="btn btn-primary btn-lg"><i class="fas fa-edit"></i> Editar Información</a>
+    </div>
+</div>
+{% endblock %}

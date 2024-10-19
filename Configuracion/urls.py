@@ -27,4 +27,7 @@ urlpatterns = [
     path('editarParametro/<int:parametroID>/', views.editParametro, name='editParametro'), 
     path('eliminarParametro/<int:parametroID>/', views.eliminarParametro, name='eliminarParametro'), 
 
+
+    path('organizacion/', views.indexOrganizacion, name='indexOrganizacion')
+
 ]
