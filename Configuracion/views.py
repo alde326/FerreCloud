@@ -11,7 +11,7 @@ import json
 from .models import Costos, Tipos, Parametros, Organizacion
 
 #Forms
-from .forms import CostosForm, TipoForm, ParametroForm
+from .forms import CostosForm, TipoForm, ParametroForm, OrganizacionForm
 
 
 
@@ -225,4 +225,18 @@ def eliminarParametro(request, parametroID):
 def indexOrganizacion(request):
     organizacion = Organizacion.objects.get()
     return render(request, 'indexOrganizacion.html', {'parametros':organizacion})
+
+
+
+
+def editOrganizacion(request):
+    organizacion = get_object_or_404(Organizacion, id=1)
+    if request.method == "POST":
+        form = OrganizacionForm(request.POST, instance=organizacion)
+        if form.is_valid():
+            form.save()
+            return redirect('indexOrganizacion')
+    else:
+        form = OrganizacionForm(instance=organizacion)
+    return render(request, 'editOrganizacion.html', {'form': form})
 

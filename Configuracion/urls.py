@@ -28,6 +28,7 @@ urlpatterns = [
     path('eliminarParametro/<int:parametroID>/', views.eliminarParametro, name='eliminarParametro'), 
 
 
-    path('organizacion/', views.indexOrganizacion, name='indexOrganizacion')
+    path('organizacion/', views.indexOrganizacion, name='indexOrganizacion'),
+    path('editarOrganizacion/', views.editOrganizacion, name='editOrganizacion')
 
 ]

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Costos,Tipos,Parametros
+from .models import Costos,Tipos,Parametros, Organizacion
 
 class CostosForm(forms.ModelForm):
 
@@ -23,4 +23,10 @@ class ParametroForm(forms.ModelForm):
 
      class Meta:
         model = Parametros
-        fields = ['nombre', 'porcentaje']    
+        fields = ['nombre', 'porcentaje'] 
+
+
+class OrganizacionForm(forms.ModelForm):
+    class Meta:
+        model = Organizacion
+        fields = ['razonSocial', 'NIT', 'direccion', 'correoElectronico', 'telefono']
