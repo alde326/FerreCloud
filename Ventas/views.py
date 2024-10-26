@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.template.loader import get_template
+from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.contrib import messages
 from django.urls import reverse
@@ -36,9 +37,14 @@ def indexVentas(request):
         except Parametros.DoesNotExist:
             messages.error(request, 'El parámetro IVA no está configurado.')
             return redirect('indexVentas')
-        
-        return render(request, 'indexVentas.html', {'productos': productos, 'iva_tasa': iva_tasa})
-    
+
+        # Paginación
+        paginator = Paginator(productos, 5)  # Cambia 10 por el número de productos que desees mostrar por página
+        page_number = request.GET.get('page')  # Obtiene el número de página de la URL
+        productos_paginados = paginator.get_page(page_number)
+
+        return render(request, 'indexVentas.html', {'productos': productos_paginados, 'iva_tasa': iva_tasa})
+
     except PermissionDenied:
         messages.error(request, 'No tienes permiso para ver esta página.')
         # Obtener la URL anterior o redirigir a 'home' si no hay URL previa
