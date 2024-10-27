@@ -5,57 +5,66 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Reporte de Gastos</h1>
+    <div>
+        <h1>Reporte de Gastos</h1>
+        <br>
+        <br>
+    </div>
+    
 
     <!-- Reporte de Costos Sin Ingresos -->
-    <h2>Costos por Tipo (Sin Ingresos)</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Tipo</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for costo in costos_sin_ingreso %}
+    <h2>Costos por Tipo</h2>
+    <div class="table-responsive mb-4">
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
                 <tr>
-                    <td>{{ costo.tipo.nombre }}</td>
-                    <td>{{ costo.valor }}</td>
+                    <th>Tipo</th>
+                    <th>Total</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for costo in costos_sin_ingreso %}
+                    <tr>
+                        <td>{{ costo.tipo.nombre }}</td>
+                        <td>{{ costo.valor }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-    <h2>Gráfico de Costos por Tipo (Sin Ingresos)</h2>
+    <h2>Gráfico de Costos por Tipo</h2>
     <div style="max-width: 1000px; margin: 0 auto;">
         <canvas id="costosPorTipoSinIngresosChart" width="1000" height="500"></canvas>
     </div>
 
-    <h2>Gráfico de Costos Mensuales (Sin Ingresos)</h2>
+    <h2>Gráfico de Costos Mensuales</h2>
     <div style="max-width: 1000px; margin: 0 auto;">
         <canvas id="costosMensualesSinIngresosChart" width="1000" height="500"></canvas>
     </div>
 
     <!-- Reporte de Costos de Ingresos -->
-    <h2>Costos por Tipo (Ingresos)</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Tipo</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for costo in costos_ingreso %}
+    <h2>Ingresos</h2>
+    <div class="table-responsive mb-4">
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
                 <tr>
-                    <td>{{ costo.tipo.nombre }}</td>
-                    <td>{{ costo.valor }}</td>
+                    <th>Tipo</th>
+                    <th>Total</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for costo in costos_ingreso %}
+                    <tr>
+                        <td>{{ costo.tipo.nombre }}</td>
+                        <td>{{ costo.valor }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-    <h2>Gráfico de Costos por Tipo (Ingresos)</h2>
+    <h2>Gráfico de Ingresos</h2>
     <div style="max-width: 1000px; margin: 0 auto;">
         <canvas id="costosPorTipoIngresosChart" width="1000" height="500"></canvas>
     </div>
