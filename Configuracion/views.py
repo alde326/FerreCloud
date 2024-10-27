@@ -141,33 +141,46 @@ def analisis_costos(request):
 
     # Obtener todos los costos no eliminados
     costos = Costos.objects.filter(eliminado=False)
+    
+    # Filtrar costos que no sean "Ingreso" y costos que sean "Ingreso"
+    costos_sin_ingreso = costos.exclude(tipo__nombre="INGRESO")
+    costos_ingreso = costos.filter(tipo__nombre="INGRESO")
 
-    # Resumen de costos por tipo
-    costos_por_tipo = costos.values('tipo__nombre').annotate(total=Sum('valor'))
+    # Resumen de costos por tipo (sin "Ingreso")
+    costos_por_tipo_sin_ingreso = costos_sin_ingreso.values('tipo__nombre').annotate(total=Sum('valor'))
 
-    # Resumen de costos por mes
-    costos_por_mes = costos.filter(fecha__gte=start_of_month).values('fecha__month').annotate(total=Sum('valor'))
+    # Resumen de costos por tipo (solo "Ingreso")
+    costos_por_tipo_ingreso = costos_ingreso.values('tipo__nombre').annotate(total=Sum('valor'))
 
-    # Crear un diccionario para los costos por mes
+    # Resumen de costos por mes (sin "Ingreso")
+    costos_por_mes = costos_sin_ingreso.filter(fecha__gte=start_of_month).values('fecha__month').annotate(total=Sum('valor'))
+
+    # Crear un diccionario para los costos por mes (sin "Ingreso")
     costos_mensuales = {calendar.month_name[i]: 0 for i in range(1, 13)}
     for costo in costos_por_mes:
         costos_mensuales[calendar.month_name[costo['fecha__month']]] = float(costo['total'])
 
     # Convertir los datos a JSON, asegurándonos de que los valores sean flotantes
-    costos_por_tipo_json = json.dumps([
+    costos_por_tipo_sin_ingreso_json = json.dumps([
         {'tipo__nombre': tipo['tipo__nombre'], 'total': float(tipo['total'])}
-        for tipo in costos_por_tipo
+        for tipo in costos_por_tipo_sin_ingreso
+    ])
+    costos_por_tipo_ingreso_json = json.dumps([
+        {'tipo__nombre': tipo['tipo__nombre'], 'total': float(tipo['total'])}
+        for tipo in costos_por_tipo_ingreso
     ])
     costos_mensuales_json = json.dumps(costos_mensuales)
 
     context = {
-        'costos': costos,
-        'costos_por_tipo_json': costos_por_tipo_json,
+        'costos_sin_ingreso': costos_sin_ingreso,
+        'costos_ingreso': costos_ingreso,
+        'costos_por_tipo_sin_ingreso_json': costos_por_tipo_sin_ingreso_json,
+        'costos_por_tipo_ingreso_json': costos_por_tipo_ingreso_json,
         'costos_mensuales_json': costos_mensuales_json,
     }
     
-    
     return render(request, 'analisis.html', context)
+
 
 
 
