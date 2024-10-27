@@ -28,7 +28,11 @@ def indexVentas(request):
         if not request.user.has_perm('Inventario.view_producto'):
             raise PermissionDenied
 
-        productos = Producto.objects.filter(eliminado=False)
+        # Obtén el parámetro de búsqueda
+        query = request.GET.get('buscar', '')
+        
+        # Filtra los productos que no están eliminados y que coinciden con la búsqueda
+        productos = Producto.objects.filter(eliminado=False, nombre__icontains=query)
 
         # Obtén el parámetro de IVA como un objeto único
         try:
@@ -39,11 +43,15 @@ def indexVentas(request):
             return redirect('indexVentas')
 
         # Paginación
-        paginator = Paginator(productos, 5)  # Cambia 10 por el número de productos que desees mostrar por página
+        paginator = Paginator(productos, 5)  # Cambia 5 por el número de productos que desees mostrar por página
         page_number = request.GET.get('page')  # Obtiene el número de página de la URL
         productos_paginados = paginator.get_page(page_number)
 
-        return render(request, 'indexVentas.html', {'productos': productos_paginados, 'iva_tasa': iva_tasa})
+        return render(request, 'indexVentas.html', {
+            'productos': productos_paginados,
+            'iva_tasa': iva_tasa,
+            'buscar': query,  # Agregar el término de búsqueda al contexto
+        })
 
     except PermissionDenied:
         messages.error(request, 'No tienes permiso para ver esta página.')

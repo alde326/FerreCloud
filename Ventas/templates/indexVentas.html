@@ -11,8 +11,11 @@ Ventas
     <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h2 class="mb-0">Sección de Productos</h2>
-        <!-- Campo de búsqueda -->
-        <input type="text" id="buscarProducto" class="form-control w-25" placeholder="Buscar producto..." onkeyup="buscarEnTabla()">
+        <!-- Formulario de búsqueda -->
+        <form action="{% url 'indexVentas' %}" method="get" class="d-inline">
+          <input type="text" name="buscar" class="form-control w-100" placeholder="Buscar producto..." value="{{ buscar }}">
+          <button type="submit" class="btn btn-primary">Buscar</button>
+        </form>
       </div>
       <div class="card-body">
         <table class="table table-bordered">
@@ -55,17 +58,17 @@ Ventas
           <ul class="pagination justify-content-center">
             {% if productos.has_previous %}
               <li class="page-item">
-                <a class="page-link" href="?page={{ productos.previous_page_number }}">Anterior</a>
+                <a class="page-link" href="?page={{ productos.previous_page_number }}&buscar={{ buscar }}">Anterior</a>
               </li>
             {% endif %}
             {% for num in productos.paginator.page_range %}
               <li class="page-item {% if productos.number == num %}active{% endif %}">
-                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                <a class="page-link" href="?page={{ num }}&buscar={{ buscar }}">{{ num }}</a>
               </li>
             {% endfor %}
             {% if productos.has_next %}
               <li class="page-item">
-                <a class="page-link" href="?page={{ productos.next_page_number }}">Siguiente</a>
+                <a class="page-link" href="?page={{ productos.next_page_number }}&buscar={{ buscar }}">Siguiente</a>
               </li>
             {% endif %}
           </ul>
