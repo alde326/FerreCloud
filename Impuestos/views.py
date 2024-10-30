@@ -192,6 +192,16 @@ def calculateINCRNGO():
 
 
 
+def calculateICA():
+    
+    
+    
+    return 0    
+
+
+
+
+
 # TODO Calculate taxes
 def calculateTaxes():
     
