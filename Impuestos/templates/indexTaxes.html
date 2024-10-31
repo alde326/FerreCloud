@@ -1,18 +1,18 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    Regimen simple
+    Régimen simple
 {% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-    <div class="card shadow-sm">
+    <div class="card shadow-sm mb-4">
         <div class="card-header bg-primary text-white">
             <h3 class="mb-0">Depuración de la seguridad social</h3>
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered">
+                <table class="table table-bordered table-striped">
                     <thead class="thead-light">
                         <tr>
                             <th class="text-center">Concepto</th>
@@ -30,24 +30,24 @@
                         </tr>
                         <tr>
                             <td>Ingresos depurados</td>
-                            <td class="text-center"> $ {{ ingresosDepurados|floatformat:2 }} </td>
+                            <td class="text-center"> ${{ ingresosDepurados|floatformat:2 }} </td>
                         </tr>
                         <tr>
-                            <td>IBC ({{tasas.IBC}})</td>
+                            <td>IBC ({{ tasas.IBC }})</td>
                             <td class="text-center"> ${{ IBC|floatformat:2 }} </td>
                         </tr>
                         <tr>
                             <td>
                                 Aportes de seguridad social del empleador (28,5% + FSP)
                                 <ul>
-                                    <li>Pensión ({{tasas.Pensión }})</li>
-                                    <li>Salud ({{tasas.Salud}})</li>
-                                    <li>Riesgos laborales - ARL ({{tasas.ARL}})</li>
-                                    <li>Caja de compensación familliar ({{tasas.Caja}})</li>
+                                    <li>Pensión ({{ tasas.Pensión }})</li>
+                                    <li>Salud ({{ tasas.Salud }})</li>
+                                    <li>Riesgos laborales - ARL ({{ tasas.ARL }})</li>
+                                    <li>Caja de compensación familiar ({{ tasas.Caja }})</li>
                                 </ul>
                             </td>
-                            <td class="text-center">
-                                <strong> ${{ aportes|floatformat:2 }} </strong> <br>
+                            <td class="text-center font-weight-bold"> 
+                                ${{ aportes|floatformat:2 }} <br>
                                 ${{ pension|floatformat:2 }} <br>
                                 ${{ salud|floatformat:2 }} <br>
                                 ${{ ARL|floatformat:2 }} <br>
@@ -60,13 +60,13 @@
         </div>
     </div>
     
-    <div class="card shadow-sm">
+    <div class="card shadow-sm mb-4">
         <div class="card-header bg-primary text-white">
-            <h3 class="mb-0">Calculo del impuesto simple</h3>
+            <h3 class="mb-0">Cálculo del impuesto simple</h3>
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered">
+                <table class="table table-bordered table-striped">
                     <thead class="thead-light">
                         <tr>
                             <th class="text-center">Concepto</th>
@@ -80,32 +80,43 @@
                         </tr>
                         <tr>
                             <td>INCRNGO (Of. 010316 2-may-2019) no gravado</td>
-                            <td class="text-center">${{ INCRNGO|floatformat:2 }}</td>
+                            <td class="text-center">$0</td>
+                        </tr>
+                        <tr>
+                            <td>Base gravable</td>
+                            <td class="text-center">${{ baseGravable|floatformat:2 }}</td>
                         </tr>
                         <tr>
                             <td style="text-align: center;"><strong>LIQUIDACIÓN IMPUESTO SIMPLE</strong></td>
-                            <td class="text-center">0</td>
+                            <td class="text-center font-weight-bold">${{ liquidacionSimple|floatformat:2 }}</td>
                         </tr>
                         <tr>
                             <td>Valor a pagar impuesto ICA</td>
-                            <td class="text-center">-</td>
+                            <td class="text-center">${{ ICA|floatformat:2 }}</td>
                         </tr>
                         <tr>
-                            <td>Descuento por aportes de pensiones de los empleados (12%)</td>
-                            <td class="text-center">-</td>
+                            <td>Descuento por aportes de pensiones de los empleados (${{ pension|floatformat:2 }})</td>
+                            <td class="text-center"> ${{ pension|floatformat:2 }}</td>
                         </tr>
                         <tr>
                             <td>Descuentos por medios electrónicos (0,5%)</td>
-                            <td class="text-center">-</td>
+                            <td class="text-center">${{ descuentoMediosElectronicos|floatformat:2 }}</td>
                         </tr>
                         <tr>
                             <td><strong>Valor a pagar simple</strong></td>
-                            <td class="text-center">-</td>
+                            <td class="text-center font-weight-bold">{{ valorApagarSimple|floatformat:2 }}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
+
+    <div class="text-center mb-4">
+        <button class="btn btn-success" onclick="window.print()">Imprimir Reporte</button>
+        <button class="btn btn-primary" id="download-btn">Descargar Reporte</button>
+    </div>
+
 </div>
+
 {% endblock %}

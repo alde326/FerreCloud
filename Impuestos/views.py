@@ -47,7 +47,7 @@ def indexTaxes(request):
 
         #Tasas
         # Lista de nombres de parámetros
-        nombres_parametros = ["IBC", "Salud", "Pensión", "Caja", "ARL", "ICA"]
+        nombres_parametros = ["IBC", "Salud", "Pensión", "Caja", "ARL", "ICA", "Descuento por medios electrónicos", "Impuesto simple"]
 
         # Diccionario para almacenar las tasas
         tasas = {}
@@ -75,7 +75,15 @@ def indexTaxes(request):
 
 
         INCRNGO = calculateINCRNGO(inicio_rango, fin_rango)
-        ICA = calculateICA(inicio_rango, fin_rango, ingresosBrutos, tasas["ICA"])
+        baseGravable = ingresosBrutos - INCRNGO
+        ICA = calculateICA(ingresosBrutos, tasas["ICA"])
+
+        liquidacionSimple = baseGravable*tasas["Impuesto simple"]
+
+        valorApagarSimple = liquidacionSimple - ICA - pension
+
+        #Descuentos
+        desuentoMediosElctronicos = calculateDescuentoMediosElctronicos(inicio_rango, fin_rango)
 
 
         return render(request, 'indexTaxes.html', {
@@ -89,12 +97,20 @@ def indexTaxes(request):
             'salud': salud, 
             'pension': pension, 
             'cajaDeCompensacion': cajaDeCompensacion, 
-            'ARL': ARL, 
+            'ARL': ARL,
+
             #Tasas
             'tasas':tasas,
 
+            'INCRNGO': INCRNGO,
+            'baseGravable':baseGravable,
+            'liquidacionSimple': liquidacionSimple,
+
+            #Descuentos
+            'desuentoMediosElctronicos': desuentoMediosElctronicos,
             'ICA':ICA,
-            'INCRNGO': INCRNGO,   
+
+            'valorApagarSimple': valorApagarSimple
         })
     else:
         # Manejo de método GET si es necesario
@@ -139,7 +155,7 @@ def calculateSales(inicio_rango, fin_rango):
     # Filtrar facturas dentro del rango
     ventas = Factura.objects.filter(
         fecha__range=[inicio_rango, fin_rango]
-    ).aggregate(sales=Sum('total_con_iva'))
+    ).aggregate(sales=Sum('total'))
     
     return ventas['sales'] if ventas['sales'] else 0
  
@@ -185,8 +201,8 @@ def calculateARL(nomina, tasa):
 
 
 
-def calculateICA(inicio_rango, fin_rango, sales, tasa):
-    return 0
+def calculateICA(sales, tasa):
+    return sales * tasa
 
 
 
@@ -212,21 +228,17 @@ def calculateCostos(inicio_rango, fin_rango):
 
 
 
-def calculateINCRNGO(inicio_rango, fin_rango):
-    costos = Costos.objects.filter(
+def calculateINCRNGO(inicio_rango, fin_rango): 
+    return 0
+
+
+
+
+
+def calculateDescuentoMediosElctronicos(inicio_rango, fin_rango):
+    ventas = Factura.objects.filter(
         fecha__range=[inicio_rango, fin_rango],
-        tipo_id=4
-    ).aggregate(valorcitos=Sum('valor'))
-    
-    return costos['valorcitos'] if costos['valorcitos'] else 0
+        pagoElectronico=True  # Filtrar por pago electrónico
+    ).aggregate(total_ventas=Sum('total'))
 
-
-
-
-
-# TODO Calculate taxes
-def calculateTaxes():
-    
-    taxes = 0
-
-    return taxes
+    return float(ventas['total_ventas'])*0.5 or 0# Retornar el total
