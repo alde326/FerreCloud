@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    Configuración
+    Ingresos y egresos
 {% endblock %}
 
 {% block content %}
@@ -64,6 +64,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Nombre</th>
+                    <th>Ingreso/Egreso</th>
                     <th>Tipo</th>
                     <th>Valor</th>
                     <th>Fecha</th>
@@ -77,6 +78,7 @@
                 <tr>
                     <td>{{ costo.id }}</td>
                     <td>{{ costo.nombre }}</td>
+                    <td>{{ costo.ingreso_egreso }}</td>
                     <td>{{ costo.tipo }}</td>
                     <td>{{ costo.valor }}</td>
                     <td>{{ costo.fecha }}</td>

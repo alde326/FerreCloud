@@ -13,7 +13,7 @@ from xhtml2pdf import pisa
 import json
 
 #Modelos
-from Configuracion.models import Parametros
+from Configuracion.models import Parametros, Costos
 from .models import Factura, DetalleFactura
 from Inventario.models import Producto
 from Clientes.models import Cliente

@@ -21,6 +21,13 @@ Editar costo
                         </div>
                     </div>
                     <div class="form-group">
+                        {{ form.ingreso_egreso.label_tag }}
+                        {{ form.ingreso_egreso|add_class:"form-control" }}
+                        <div class="invalid-feedback">
+                            Por favor, ingresa si es ingreso o egreso.
+                        </div>
+                    </div>
+                    <div class="form-group">
                         {{ form.tipo.label_tag }}
                         {{ form.tipo|add_class:"form-control" }}
                         <div class="invalid-feedback">

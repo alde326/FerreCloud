@@ -11,6 +11,7 @@ class Tipos(models.Model):
 
 class Costos(models.Model):
     nombre = models.CharField(max_length=255)
+    ingreso_egreso = models.BooleanField(default=False)
     tipo = models.ForeignKey(Tipos, on_delete=models.CASCADE, default=1)  # Llave foránea a Tipos
     valor = models.DecimalField(max_digits=10, decimal_places=2)
     fecha = models.DateField()
