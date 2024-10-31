@@ -73,18 +73,16 @@ def indexTaxes(request):
         ARL = calculateARL(nomina, tasas["ARL"]) 
         aportes = salud + pension + cajaDeCompensacion + ARL
 
-
         INCRNGO = calculateINCRNGO(inicio_rango, fin_rango)
         baseGravable = ingresosBrutos - INCRNGO
-        ICA = calculateICA(ingresosBrutos, tasas["ICA"])
-
+        
         liquidacionSimple = baseGravable*tasas["Impuesto simple"]
 
-        valorApagarSimple = liquidacionSimple - ICA - pension
-
         #Descuentos
-        desuentoMediosElctronicos = calculateDescuentoMediosElctronicos(inicio_rango, fin_rango)
+        descuentoMediosElectronicos = calculateDescuentoMediosElectronicos(inicio_rango, fin_rango)
+        ICA = calculateICA(ingresosBrutos, tasas["ICA"])
 
+        valorApagarSimple = liquidacionSimple - ICA - pension
 
         return render(request, 'indexTaxes.html', {
             'sales': ingresosBrutos, 
@@ -107,7 +105,7 @@ def indexTaxes(request):
             'liquidacionSimple': liquidacionSimple,
 
             #Descuentos
-            'desuentoMediosElctronicos': desuentoMediosElctronicos,
+            'descuentoMediosElectronicos': descuentoMediosElectronicos,
             'ICA':ICA,
 
             'valorApagarSimple': valorApagarSimple
@@ -235,10 +233,10 @@ def calculateINCRNGO(inicio_rango, fin_rango):
 
 
 
-def calculateDescuentoMediosElctronicos(inicio_rango, fin_rango):
+def calculateDescuentoMediosElectronicos(inicio_rango, fin_rango):
     ventas = Factura.objects.filter(
         fecha__range=[inicio_rango, fin_rango],
         pagoElectronico=True  # Filtrar por pago electrónico
     ).aggregate(total_ventas=Sum('total'))
 
-    return float(ventas['total_ventas'])*0.5 or 0# Retornar el total
+    return float(ventas['total_ventas'])*0.5# Retornar el total

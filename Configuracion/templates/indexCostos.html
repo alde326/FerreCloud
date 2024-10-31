@@ -25,24 +25,18 @@
                 <select name="tipo" class="form-control">
                     <option value="">Todos</option>
                     {% for t in tipos %}
-                    <option value="{{ t.id }}" {% if request.GET.tipo == t.id %}selected{% endif %}>{{ t.nombre }}</option>
+                    <option value="{{ t.id }}">{{ t.nombre }}</option>
                     {% endfor %}
                 </select>
+            </div>
+            <div class="col">
+                <label for="busqueda">Buscar:</label>
+                <input type="text" class="form-control" name="busqueda" placeholder="Buscar costo..." value="{{ request.GET.busqueda }}">
             </div>
             <div class="col-auto">
                 <button type="submit" class="btn btn-primary">Filtrar</button>
             </div>
         </form>
-    </div>
-
-    <!-- Fila para input y botón de búsqueda -->
-    <div class="row mb-3">
-        <div class="col">
-            <input type="text" class="form-control" placeholder="Buscar costo...">
-        </div>
-        <div class="col-auto">
-            <button class="btn btn-primary">Buscar</button>
-        </div>
     </div>
 
     <div>
@@ -97,7 +91,7 @@
         </table>
     </div>
 
-    <!-- Fila para botón de crear empleado -->
+    <!-- Fila para botón de crear un tipo -->
     <div class="row">
         <div class="col-auto">
             <a href="{% url 'indexTipos' %}" class="btn btn-success">Ver tipos de costos</a>

@@ -2,8 +2,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
-from django.db.models import Sum
 from django.utils import timezone
+from django.db.models import Sum
+from django.db.models import Q
+
 import calendar
 import json
 
@@ -34,20 +36,32 @@ def indexConfiguracion(request):
 
 def indexCostos(request):
     costos = Costos.objects.filter(eliminado=False)
-    
-    # Obtener los parámetros de fecha
+
+    # Obtener los parámetros de búsqueda y filtro
     fecha_inicio = request.GET.get('fecha_inicio')
     fecha_fin = request.GET.get('fecha_fin')
     tipo = request.GET.get('tipo')
-    
+    busqueda = request.GET.get('busqueda')  # Nuevo parámetro de búsqueda
+
+    # Filtrar por fecha
     if fecha_inicio and fecha_fin:
         costos = costos.filter(fecha__range=[fecha_inicio, fecha_fin])
-    
+
+    # Filtrar por tipo
     if tipo:
         costos = costos.filter(tipo__id=tipo)
 
+    # Filtrar por búsqueda (nombre o descripción)
+    if busqueda:
+        costos = costos.filter(Q(nombre__icontains=busqueda) | Q(descripcion__icontains=busqueda))
 
-    return render(request, 'indexCostos.html', {'costos': costos})
+    # Obtener los tipos para el filtro
+    tipos = Tipos.objects.filter(eliminado=False)
+
+    return render(request, 'indexCostos.html', {'costos': costos, 'tipos': tipos})
+
+
+
 
 
 

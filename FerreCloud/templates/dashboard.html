@@ -36,7 +36,6 @@
         .card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
-            background-color: rgba(255, 255, 255, 0.1);
         }
         .card-body {
             padding: 20px;
@@ -50,6 +49,11 @@
         .card-text {
             font-size: 14px;
         }
+        .card-accounting {
+            background-color: #6f42c1; /* Cambia este color al que prefieras */
+            color: #4a2d81; /* Asegúrate de que el texto sea legible */
+        }
+
         canvas {
             max-width: 100%;
             height: auto;
@@ -178,6 +182,15 @@
                 </div>
             </div>
         </div>
+        <div class="col-12"> <!-- Cambia col-lg-4 col-md-6 a col-12 -->
+            <div class="card card-accounting text-white">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-cogs"></i> Contabilidad</h5>
+                    <p class="card-text">Ajusta la contabilidad de su establecimiento.</p>
+                    <a href="/configuracion/costos/" class="btn btn-outline-light">Ir a Contabilidad de tu negocio</a>
+                </div>
+            </div>
+        </div>        
     </div>
 
     <!-- GRÁFICOS INICIALES -->
