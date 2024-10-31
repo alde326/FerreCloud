@@ -148,52 +148,85 @@ def eliminarTipo(request, tipoID):
 
 
 
+
 def analisis_costos(request):
     # Obtener la fecha actual y calcular el primer día del mes
     today = timezone.now().date()
     start_of_month = today.replace(day=1)
 
     # Obtener todos los costos no eliminados
-    costos = Costos.objects.filter(eliminado=False)
-    
-    # Filtrar costos que no sean "Ingreso" y costos que sean "Ingreso"
-    costos_sin_ingreso = costos.exclude(tipo__nombre="INGRESO")
-    costos_ingreso = costos.filter(tipo__nombre="INGRESO")
+    costos = Costos.objects.filter(eliminado=False, ingreso_egreso=False)
 
-    # Resumen de costos por tipo (sin "Ingreso")
-    costos_por_tipo_sin_ingreso = costos_sin_ingreso.values('tipo__nombre').annotate(total=Sum('valor'))
+    # Resumen de costos por tipo
+    costos_por_tipo = costos.values('tipo__nombre').annotate(total=Sum('valor'))
 
-    # Resumen de costos por tipo (solo "Ingreso")
-    costos_por_tipo_ingreso = costos_ingreso.values('tipo__nombre').annotate(total=Sum('valor'))
+    # Resumen de costos por mes
+    costos_por_mes = costos.filter(fecha__gte=start_of_month).values('fecha__month').annotate(total=Sum('valor'))
 
-    # Resumen de costos por mes (sin "Ingreso")
-    costos_por_mes = costos_sin_ingreso.filter(fecha__gte=start_of_month).values('fecha__month').annotate(total=Sum('valor'))
-
-    # Crear un diccionario para los costos por mes (sin "Ingreso")
+    # Crear un diccionario para los costos por mes
     costos_mensuales = {calendar.month_name[i]: 0 for i in range(1, 13)}
     for costo in costos_por_mes:
         costos_mensuales[calendar.month_name[costo['fecha__month']]] = float(costo['total'])
 
-    # Convertir los datos a JSON, asegurándonos de que los valores sean flotantes
-    costos_por_tipo_sin_ingreso_json = json.dumps([
+    # Obtener ingresos
+    ingresos = Costos.objects.filter(eliminado=False, ingreso_egreso=True)
+
+    # Resumen de ingresos por tipo
+    ingresos_por_tipo = ingresos.values('tipo__nombre').annotate(total=Sum('valor'))
+
+    # Resumen de ingresos por mes
+    ingresos_por_mes = ingresos.filter(fecha__gte=start_of_month).values('fecha__month').annotate(total=Sum('valor'))
+
+    # Crear un diccionario para los ingresos por mes
+    ingresos_mensuales = {calendar.month_name[i]: 0 for i in range(1, 13)}
+    for ingreso in ingresos_por_mes:
+        ingresos_mensuales[calendar.month_name[ingreso['fecha__month']]] = float(ingreso['total'])
+
+    # Calcular totales
+    total_costos = costos.aggregate(total=Sum('valor'))['total'] or 0
+    total_ingresos = ingresos.aggregate(total=Sum('valor'))['total'] or 0
+    ganancia_perdida = total_ingresos - total_costos
+
+    # Crear un diccionario para comparar ingresos y costos
+    comparacion_mensual = {
+        'mes': [],
+        'ingresos': [],
+        'costos': []
+    }
+
+    for month in calendar.month_name[1:]:
+        comparacion_mensual['mes'].append(month)
+        comparacion_mensual['ingresos'].append(ingresos_mensuales[month])
+        comparacion_mensual['costos'].append(costos_mensuales[month])
+
+    # Convertir los datos a JSON
+    costos_por_tipo_json = json.dumps([
         {'tipo__nombre': tipo['tipo__nombre'], 'total': float(tipo['total'])}
-        for tipo in costos_por_tipo_sin_ingreso
-    ])
-    costos_por_tipo_ingreso_json = json.dumps([
-        {'tipo__nombre': tipo['tipo__nombre'], 'total': float(tipo['total'])}
-        for tipo in costos_por_tipo_ingreso
+        for tipo in costos_por_tipo
     ])
     costos_mensuales_json = json.dumps(costos_mensuales)
+    ingresos_por_tipo_json = json.dumps([
+        {'tipo__nombre': tipo['tipo__nombre'], 'total': float(tipo['total'])}
+        for tipo in ingresos_por_tipo
+    ])
+    ingresos_mensuales_json = json.dumps(ingresos_mensuales)
+    comparacion_mensual_json = json.dumps(comparacion_mensual)
 
     context = {
-        'costos_sin_ingreso': costos_sin_ingreso,
-        'costos_ingreso': costos_ingreso,
-        'costos_por_tipo_sin_ingreso_json': costos_por_tipo_sin_ingreso_json,
-        'costos_por_tipo_ingreso_json': costos_por_tipo_ingreso_json,
+        'costos': costos,
+        'ingresos': ingresos,
+        'total_costos': total_costos,
+        'total_ingresos': total_ingresos,
+        'ganancia_perdida': ganancia_perdida,
+        'costos_por_tipo_json': costos_por_tipo_json,
         'costos_mensuales_json': costos_mensuales_json,
+        'ingresos_por_tipo_json': ingresos_por_tipo_json,
+        'ingresos_mensuales_json': ingresos_mensuales_json,
+        'comparacion_mensual_json': comparacion_mensual_json,  # Agregar comparación
     }
     
     return render(request, 'analisis.html', context)
+
 
 
 
