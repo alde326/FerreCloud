@@ -1,4 +1,6 @@
 from django.db import models
+import datetime
+
 
 class Tipos(models.Model):
     nombre = models.CharField(max_length=255)
@@ -14,7 +16,7 @@ class Costos(models.Model):
     ingreso_egreso = models.BooleanField(default=False)
     tipo = models.ForeignKey(Tipos, on_delete=models.CASCADE, default=1)  # Llave foránea a Tipos
     valor = models.DecimalField(max_digits=10, decimal_places=2)
-    fecha = models.DateField()
+    fecha = models.DateField(default=datetime.date.today, blank=True)
     descripcion = models.TextField(blank=True, null=True)
     eliminado = models.BooleanField(default=False)
 

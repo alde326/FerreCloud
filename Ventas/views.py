@@ -13,7 +13,7 @@ from xhtml2pdf import pisa
 import json
 
 #Modelos
-from Configuracion.models import Parametros, Costos
+from Configuracion.models import Parametros, Costos, Tipos
 from .models import Factura, DetalleFactura
 from Inventario.models import Producto
 from Clientes.models import Cliente
@@ -143,6 +143,17 @@ def procesar_formulario(request):
                 cantidad=detalle['cantidad'],
                 precio_unitario=detalle['precio_unitario']
             )
+
+        #Crear ingreso
+        Costos.objects.create(
+            nombre = "Venta",
+            ingreso_egreso = True,
+            tipo = Tipos.objects.get(id=6),
+            valor = total_con_iva,
+            descripcion="Factura #" + str(factura.id),
+
+        )
+
 
         # Construir la URL para ver la factura usando facturaID
         url_factura = reverse('verFactura', args=[factura.id])

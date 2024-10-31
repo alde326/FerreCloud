@@ -78,7 +78,7 @@
                 <tr>
                     <td>{{ costo.id }}</td>
                     <td>{{ costo.nombre }}</td>
-                    <td>{{ costo.ingreso_egreso }}</td>
+                    {% if costo.ingreso_egreso == 1 %} <td> Ingreso </td> {% else %} <td> Egreso </td> {% endif %}
                     <td>{{ costo.tipo }}</td>
                     <td>{{ costo.valor }}</td>
                     <td>{{ costo.fecha }}</td>
