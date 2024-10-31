@@ -22,39 +22,36 @@
                     <tbody>
                         <tr>
                             <td>Ingresos brutos</td>
-                            <td class="text-center"> ${{ sales }} </td>
+                            <td class="text-center"> ${{ sales|floatformat:2 }} </td>
                         </tr>
                         <tr>
                             <td>Total costos y deducciones</td>
-                            <td class="text-center"> ${{ costos }} </td>
+                            <td class="text-center"> ${{ costos|floatformat:2 }} </td>
                         </tr>
                         <tr>
-                            <!-- Calculo de ingresos depurados -->
                             <td>Ingresos depurados</td>
-                            <td class="text-center"> $ {{ ingresosDepurados }} </td>
+                            <td class="text-center"> $ {{ ingresosDepurados|floatformat:2 }} </td>
                         </tr>
                         <tr>
-                            <td>IBC 40%</td>
-                            <td class="text-center"> ${{ IBC }} </td>
+                            <td>IBC ({{tasas.IBC}})</td>
+                            <td class="text-center"> ${{ IBC|floatformat:2 }} </td>
                         </tr>
                         <tr>
                             <td>
                                 Aportes de seguridad social del empleador (28,5% + FSP)
                                 <ul>
-                                    <li>Pensión (12%)</li>
-                                    <li>Salud (8,5%)</li>
-                                    <li>Riesgos laborales - ARL (POR DEFINIR)</li>
-                                    <li>Caja de compensación familliar (4%)</li>
+                                    <li>Pensión ({{tasas.Pensión }})</li>
+                                    <li>Salud ({{tasas.Salud}})</li>
+                                    <li>Riesgos laborales - ARL ({{tasas.ARL}})</li>
+                                    <li>Caja de compensación familliar ({{tasas.Caja}})</li>
                                 </ul>
-                                </td>
+                            </td>
                             <td class="text-center">
-                                <strong> ${{aportes}} </strong> <br>
-                                
-                                    ${{pension}} <br>
-                                    ${{salud}} <br>
-                                    ${{ARL}} <br>
-                                    ${{cajaDeCompensacion}} <br>
-                                
+                                <strong> ${{ aportes|floatformat:2 }} </strong> <br>
+                                ${{ pension|floatformat:2 }} <br>
+                                ${{ salud|floatformat:2 }} <br>
+                                ${{ ARL|floatformat:2 }} <br>
+                                ${{ cajaDeCompensacion|floatformat:2 }} <br>
                             </td>
                         </tr>
                     </tbody>
@@ -79,14 +76,15 @@
                     <tbody>
                         <tr>
                             <td>Ingresos brutos</td>
-                            <td class="text-center">${{ sales }}</td>
+                            <td class="text-center">${{ sales|floatformat:2 }}</td>
                         </tr>
                         <tr>
                             <td>INCRNGO (Of. 010316 2-may-2019) no gravado</td>
-                            <td class="text-center">${{ INCRNGO }}</td>
+                            <td class="text-center">${{ INCRNGO|floatformat:2 }}</td>
                         </tr>
                         <tr>
-                            <td colspan="2" style="text-align: center;"><strong>LIQUIDACIÓN IMPUESTO SIMPLE</strong></td>
+                            <td style="text-align: center;"><strong>LIQUIDACIÓN IMPUESTO SIMPLE</strong></td>
+                            <td class="text-center">0</td>
                         </tr>
                         <tr>
                             <td>Valor a pagar impuesto ICA</td>
@@ -111,4 +109,3 @@
     </div>
 </div>
 {% endblock %}
-

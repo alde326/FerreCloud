@@ -5,11 +5,14 @@ from django.contrib import messages
 from django.db.models import Sum
 from django.utils import timezone
 from datetime import datetime
+from decimal import Decimal
 import calendar
 
 #Modelos
+from Empleados.models import Empleado
 from Ventas.models import Factura
 from Configuracion.models import Costos
+from Configuracion.models import Parametros
 
 
 
@@ -42,31 +45,56 @@ def indexTaxes(request):
         # Obtener el rango bimensual basado en el bimestre
         inicio_rango, fin_rango = get_bimonthly_range(bimestre)
 
+        #Tasas
+        # Lista de nombres de parámetros
+        nombres_parametros = ["IBC", "Salud", "Pensión", "Caja", "ARL", "ICA"]
+
+        # Diccionario para almacenar las tasas
+        tasas = {}
+
+        # Obtener tasas usando un bucle
+        for nombre in nombres_parametros:
+            parametro = Parametros.objects.get(nombre=nombre)
+            tasas[nombre] = Decimal(parametro.porcentaje)
+
+
         # Calcular las ventas y otros valores para el rango seleccionado
         ingresosBrutos = calculateSales(inicio_rango, fin_rango)
-        IBC = calculateIBC(ingresosBrutos)
+        nomina = calculateNomine()
+        IBC = calculateIBC(ingresosBrutos, tasas["IBC"])
         costos = calculateCostos(inicio_rango, fin_rango)
 
         ingresosDepurados = ingresosBrutos - costos
 
-        salud = calculateSalud(IBC)
-        pension = calculatePension(IBC)
-        cajaDeCompensacion = calculateCaja(IBC)
-        ARL = 0 
-        INCRNGO = calculateINCRNGO(inicio_rango, fin_rango)
+        # Calculo de prestaciones sociales
+        salud = calculateSalud(nomina, tasas["Salud"])
+        pension = calculatePension(nomina, tasas["Pensión"])
+        cajaDeCompensacion = calculateCaja(nomina, tasas["Caja"])
+        ARL = calculateARL(nomina, tasas["ARL"]) 
+        aportes = salud + pension + cajaDeCompensacion + ARL
 
-        aportes = salud + pension + cajaDeCompensacion
+
+        INCRNGO = calculateINCRNGO(inicio_rango, fin_rango)
+        ICA = calculateICA(inicio_rango, fin_rango, ingresosBrutos, tasas["ICA"])
+
 
         return render(request, 'indexTaxes.html', {
-            'sales': ingresosBrutos, 'costos': costos,
+            'sales': ingresosBrutos, 
+            'costos': costos,
             'IBC': IBC,
+            'ingresosDepurados': ingresosDepurados,
+
+            #Seguridad social
             'aportes': aportes,
             'salud': salud, 
             'pension': pension, 
             'cajaDeCompensacion': cajaDeCompensacion, 
             'ARL': ARL, 
-            'ingresosDepurados': ingresosDepurados,
-            'INCRNGO': INCRNGO 
+            #Tasas
+            'tasas':tasas,
+
+            'ICA':ICA,
+            'INCRNGO': INCRNGO,   
         })
     else:
         # Manejo de método GET si es necesario
@@ -119,37 +147,46 @@ def calculateSales(inicio_rango, fin_rango):
 
 
 
-def calculateIBC(ingresosBrutos):
-
-    return ingresosBrutos/100*40 #Formula para el IBC
+def calculateIBC(ingresosBrutos, tasa):
+    return ingresosBrutos * tasa #Formula para el IBC
 
 
 
 
 
 # TODO Calculate heath
-def calculateSalud(IBC):
-    salud = float(IBC) / 100 * 8.5
-    return salud
-
+def calculateSalud(nomina, tasa):
+    return Decimal(nomina) * tasa
 
 
 
 
 
 # TODO Calculate pesión
-def calculatePension(IBC):
-    pension = float(IBC) / 100 * 12
-    return pension
+def calculatePension(nomina, tasa):
+    return Decimal(nomina) * tasa
 
 
 
 
 
 # TODO Calculate caja de compensación familiar
-def calculateCaja(IBC):
-    caja = float(IBC) / 100 * 4
-    return caja
+def calculateCaja(nomina, tasa):
+    return Decimal(nomina) * tasa
+
+
+
+
+
+def calculateARL(nomina, tasa):
+    return Decimal(nomina) * tasa
+
+
+
+
+
+def calculateICA(inicio_rango, fin_rango, sales, tasa):
+    return 0
 
 
 
@@ -157,10 +194,8 @@ def calculateCaja(IBC):
 
 # TODO Calculate nomine
 def calculateNomine():
-    
-    nomine = 0
-
-    return nomine 
+    nomine = Empleado.objects.filter(eliminado=False).aggregate(Sum('salario'))
+    return nomine['salario__sum'] or 0  # Devuelve 0 si no hay empleados
 
 
 
@@ -184,16 +219,6 @@ def calculateINCRNGO(inicio_rango, fin_rango):
     ).aggregate(valorcitos=Sum('valor'))
     
     return costos['valorcitos'] if costos['valorcitos'] else 0
-
-
-
-
-
-def calculateICA():
-    
-    
-    
-    return 0    
 
 
 
