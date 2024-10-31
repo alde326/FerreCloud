@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.utils import timezone
-from django.db.models import Sum
+from django.db.models import Sum, F
 from django.db.models import Q
 
 import calendar
@@ -11,9 +11,10 @@ import json
 
 #Modelos
 from .models import Costos, Tipos, Parametros, Organizacion
+from Ventas.models import Factura, DetalleFactura
 
 #Forms
-from .forms import CostosForm, TipoForm, ParametroForm, OrganizacionForm
+from .forms import CostosForm, TipoForm, ParametroForm, OrganizacionForm, ReporteVentasForm
 
 
 
@@ -225,7 +226,7 @@ def analisis_costos(request):
         'comparacion_mensual_json': comparacion_mensual_json,  # Agregar comparación
     }
     
-    return render(request, 'analisis.html', context)
+    return render(request, 'analisisDeGastos.html', context)
 
 
 
@@ -300,3 +301,43 @@ def editOrganizacion(request):
         form = OrganizacionForm(instance=organizacion)
     return render(request, 'editOrganizacion.html', {'form': form})
 
+
+#-------------------------------------REPORTES--------------------------------------------------
+
+def indexReportes(request):
+    return render(request, 'indexReportes.html')
+
+
+
+
+def reporte_ventas(request):
+    form = ReporteVentasForm(request.GET or None)
+    facturas = Factura.objects.all()
+    
+    if form.is_valid():
+        fecha_inicio = form.cleaned_data.get('fecha_inicio')
+        fecha_fin = form.cleaned_data.get('fecha_fin')
+        
+        if fecha_inicio and fecha_fin:
+            facturas = facturas.filter(fecha__range=[fecha_inicio, fecha_fin])
+
+    # Resumen de ventas
+    total_vendido = facturas.aggregate(Sum('total'))['total__sum'] or 0
+    total_iva = facturas.aggregate(Sum('iva'))['iva__sum'] or 0
+    total_facturas = facturas.count()
+
+    # Detalles de productos vendidos
+    detalles = DetalleFactura.objects.filter(factura__in=facturas).values('producto__nombre').annotate(
+    total_vendido=Sum('cantidad'),
+    total_precio=Sum(F('precio_unitario') * F('cantidad'))
+    )
+
+    context = {
+        'form': form,
+        'total_vendido': total_vendido,
+        'total_iva': total_iva,
+        'total_facturas': total_facturas,
+        'detalles': detalles,
+    }
+    
+    return render(request, 'reporteDeVentas.html', context)

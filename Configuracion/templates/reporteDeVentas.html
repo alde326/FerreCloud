@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Reporte de Ventas
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Reporte de Ventas</h2>
+    <form method="get" class="mb-4">
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Generar Reporte</button>
+    </form>
+
+    <h4>Resumen de Ventas</h4>
+    <p><strong>Total Vendido:</strong> ${{ total_vendido }}</p>
+    <p><strong>Total IVA:</strong> ${{ total_iva }}</p>
+    <p><strong>Total de Facturas:</strong> {{ total_facturas }}</p>
+
+    <h4>Detalles por Producto</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad Vendida</th>
+                <th>Total Vendido</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for detalle in detalles %}
+            <tr>
+                <td>{{ detalle.producto__nombre }}</td>
+                <td>{{ detalle.total_vendido }}</td>
+                <td>${{ detalle.total_precio }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3">No se encontraron ventas en este período.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

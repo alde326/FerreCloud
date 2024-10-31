@@ -29,6 +29,9 @@ urlpatterns = [
 
 
     path('organizacion/', views.indexOrganizacion, name='indexOrganizacion'),
-    path('editarOrganizacion/', views.editOrganizacion, name='editOrganizacion')
+    path('editarOrganizacion/', views.editOrganizacion, name='editOrganizacion'),
+
+    path('reportes/', views.indexReportes, name='indexReportes'),
+    path('reporte-ventas/', views.reporte_ventas, name='reporte_ventas'),
 
 ]
