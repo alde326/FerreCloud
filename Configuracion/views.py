@@ -1,6 +1,7 @@
 #Librerías
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import PermissionDenied
+from django.db.models.functions import TruncMonth
 from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Sum, F
@@ -313,6 +314,10 @@ def indexReportes(request):
 def reporte_ventas(request):
     form = ReporteVentasForm(request.GET or None)
     facturas = Factura.objects.all()
+
+    # Inicializar fecha_inicio y fecha_fin para evitar errores de referencia
+    fecha_inicio = None
+    fecha_fin = None
     
     if form.is_valid():
         fecha_inicio = form.cleaned_data.get('fecha_inicio')
@@ -326,18 +331,45 @@ def reporte_ventas(request):
     total_iva = facturas.aggregate(Sum('iva'))['iva__sum'] or 0
     total_facturas = facturas.count()
 
-    # Detalles de productos vendidos
+    # Indicadores Clave
+    if total_facturas > 0 and fecha_inicio and fecha_fin:
+        dias_diferencia = (fecha_fin - fecha_inicio).days or 1  # Evitar división por cero
+        venta_promedio_diaria = float(total_vendido) / dias_diferencia
+        ticket_promedio = float(total_vendido) / total_facturas
+    else:
+        venta_promedio_diaria = 0
+        ticket_promedio = 0
+
+    # Detalles de productos vendidos y Top 5 Productos
     detalles = DetalleFactura.objects.filter(factura__in=facturas).values('producto__nombre').annotate(
-    total_vendido=Sum('cantidad'),
-    total_precio=Sum(F('precio_unitario') * F('cantidad'))
+        total_vendido=Sum('cantidad'),
+        total_precio=Sum(F('precio_unitario') * F('cantidad'))
     )
+
+    top_productos = detalles.order_by('-total_vendido')[:5]
+
+    # Datos para el gráfico de ventas mensuales
+    ventas_mensuales = (
+        facturas.annotate(month=TruncMonth('fecha'))
+        .values('month')
+        .annotate(total=Sum('total'))
+        .order_by('month')
+    )
+    
+    meses = [venta['month'].strftime("%Y-%m") for venta in ventas_mensuales]
+    totales_mensuales = [float(venta['total']) for venta in ventas_mensuales]  # Convertimos a float
 
     context = {
         'form': form,
         'total_vendido': total_vendido,
         'total_iva': total_iva,
         'total_facturas': total_facturas,
+        'venta_promedio_diaria': venta_promedio_diaria,
+        'ticket_promedio': ticket_promedio,
         'detalles': detalles,
+        'top_productos': top_productos,
+        'meses': json.dumps(meses),  # Pasamos a JSON para el gráfico
+        'totales_mensuales': json.dumps(totales_mensuales),
     }
     
     return render(request, 'reporteDeVentas.html', context)
