@@ -80,7 +80,6 @@ Crear Orden de Reabastecimiento
 </div>
 
 <script>
-    // Cambia el nombre de la variable para evitar conflicto
     const productosData = JSON.parse('{{ productos|escapejs }}');
 
     // Función para agregar un nuevo producto al formulario
@@ -89,7 +88,7 @@ Crear Orden de Reabastecimiento
             <tr>
                 <td>
                     <select name="producto" class="form-control">
-                        <option value="#">Elija un produto</option>
+                        <option value="#">Elija un producto</option>
                         ${productosData.map(producto => `<option value="${producto.id}">${producto.nombre}</option>`).join('')}
                     </select>
                 </td>
@@ -112,47 +111,61 @@ Crear Orden de Reabastecimiento
     });
 
     // Manejar el envío del formulario
-    $('#reabastecimiento-form').submit(function(event) {
-        event.preventDefault(); // Evitar el envío tradicional del formulario
+    $('#reabastecimiento-form').submit(function(e) {
+        e.preventDefault();  // Prevenir el envío tradicional del formulario
 
-        let rows = $('#formset-table tbody tr');
-        let detalles = [];
+        // Obtener los datos del formulario principal
+        const proveedor = $('select[name="proveedor"]').val();
+        const fechaEsperada = $('input[name="fechaEsperada"]').val();
+        const credito = $('input[name="credito"]').prop('checked');  // Esto devuelve true o false
+        const observaciones = $('input[name="observaciones"]').val();
 
-        rows.each(function() {
-            let producto = $(this).find('select[name="producto"]').val();
-            let cantidad = $(this).find('input[name="cantidad"]').val();
-            let observaciones = $(this).find('input[name="observaciones"]').val();
-
-            detalles.push({ producto, cantidad, observaciones });
+        // Obtener los detalles del formulario dinámico (productos)
+        const detalles = [];
+        $('#formset-table tbody tr').each(function() {
+            const producto = $(this).find('select[name="producto"]').val();
+            const cantidad = $(this).find('input[name="cantidad"]').val();
+            const observaciones = $(this).find('input[name="observaciones"]').val();
+            if (producto !== "#" && cantidad) {
+                detalles.push({
+                    producto: producto,
+                    cantidad: cantidad,
+                    observaciones: observaciones
+                });
+            }
         });
 
-        let formData = {
-            proveedor: $('select[name="proveedor"]').val(),
-            fechaEsperada: $('input[name="fechaEsperada"]').val(),
-            credito: $('input[name="credito"]').val(),
-            observaciones: $('textarea[name="observaciones"]').val(),
-            detalles: detalles,
-            csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val()
+        // Validar que los detalles estén completos
+        if (detalles.length === 0) {
+            alert('Debe agregar al menos un producto.');
+            return;
+        }
+
+        // Preparar los datos para enviar
+        const formData = {
+            proveedor: proveedor,
+            fechaEsperada: fechaEsperada,
+            credito: credito,
+            observaciones: observaciones,
+            detalles: detalles
         };
 
-        fetch("{% url 'crearReabastecimiento' %}", {
+        // Enviar los datos al servidor
+        $.ajax({
+            url: '{% url "crearReabastecimiento" %}',  // Asegúrate de que esta URL sea correcta
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
+            contentType: 'application/json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                if (response.success) {
+                    window.location.href = response.redirect_url;  // Redirigir si es exitoso
+                } else {
+                    alert('Error al crear la orden de reabastecimiento: ' + response.error);
+                }
             },
-            body: JSON.stringify(formData),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Orden creada exitosamente');
-                window.location.href = data.redirect_url; // Redirigir después de crear la orden
-            } else {
-                alert('Error al crear la orden');
+            error: function(xhr, status, error) {
+                alert('Error al enviar la solicitud: ' + error);
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
         });
     });
 </script>

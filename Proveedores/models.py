@@ -16,6 +16,7 @@ class Proveedor(models.Model):
 
 
 class Reabastecimiento(models.Model):
+    estado = models.IntegerField(null=True, blank=True, default=0)
     proveedor = models.ForeignKey(Proveedor, on_delete=models.CASCADE)
     fecha = models.DateTimeField(auto_now_add=True)
     fechaEsperada = models.DateTimeField(null=True, blank=True)

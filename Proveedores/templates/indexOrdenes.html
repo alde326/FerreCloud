@@ -5,6 +5,9 @@ Proveedores
 {% endblock %}
 
 {% block content %}
+
+{% load custom_filters_proveedores %}
+
 <div class="container-main">
 
     <div class="container mt-4">
@@ -49,7 +52,7 @@ Proveedores
                 <tbody>
                     {% for orden in ordenes %}
                     <tr>
-                        <td>Migrar estados</td>
+                        <td>{{ orden.estado|estado_nombre }}</td>
                         <td>{{ orden.id }}</td>
                         <td>{{ orden.fecha }}</td>
                         <td>{{ orden.proveedor }}</td>

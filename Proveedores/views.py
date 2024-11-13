@@ -114,7 +114,7 @@ def crearReabastecimiento(request):
             # Guardar los detalles
             for detalle in detalles:
                 ReabastecimientoDetalle.objects.create(
-                    reabastecimiento=reabastecimiento,
+                    reabastecimiento_id=reabastecimiento,  # Ya tenemos la instancia de Reabastecimiento
                     producto_id=detalle['producto'],
                     cantidad=detalle['cantidad'],
                     observaciones=detalle.get('observaciones', '')
