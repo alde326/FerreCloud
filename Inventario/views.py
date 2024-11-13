@@ -46,7 +46,7 @@ def eliminarProducto(request, productoID):
     producto = get_object_or_404(Producto, id=productoID)
     producto.eliminado = True
     producto.save()
-    return redirect('indexProveedor')
+    return redirect('indexInventarios')
 
 
 #Finder de productos y filtros

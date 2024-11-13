@@ -232,11 +232,11 @@ def calculateINCRNGO(inicio_rango, fin_rango):
 
 
 
-
 def calculateDescuentoMediosElectronicos(inicio_rango, fin_rango):
     ventas = Factura.objects.filter(
         fecha__range=[inicio_rango, fin_rango],
         pagoElectronico=True  # Filtrar por pago electrónico
     ).aggregate(total_ventas=Sum('total'))
-
-    return float(ventas['total_ventas'])*0.5# Retornar el total
+    
+    total_ventas = ventas['total_ventas'] if ventas['total_ventas'] is not None else 0
+    return float(total_ventas) * 0.5  # Retornar el total con el descuento
