@@ -1,0 +1,74 @@
+
+{% extends 'base.html' %}
+
+{% block title %}
+Editar Reabastecimiento
+{% endblock %}
+
+{% block content %}
+
+{% load custom_filters_proveedores %}
+<div class="container mt-4">
+    <h2>Editar Reabastecimiento</h2>
+    <form method="POST">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            {{ form.proveedor.label_tag }}
+            {{ form.proveedor|add_class:"form-control" }}
+            <div class="invalid-feedback">
+                <!-- Mensaje de error para el campo específico -->
+            </div>
+        </div>
+        <div class="form-group">
+            {{ form.fechaEsperada.label_tag }}
+            {{ form.fechaEsperada|add_class:"form-control" }}
+            <div class="invalid-feedback">
+                <!-- Mensaje de error para el campo específico -->
+            </div>
+        </div>
+        <div class="form-group">
+            {{ form.credito.label_tag }}
+            {{ form.credito|add_class:"form-control" }}
+            <div class="invalid-feedback">
+                <!-- Mensaje de error para el campo específico -->
+            </div>
+        </div>
+        <div class="form-group">
+            {{ form.observaciones.label_tag }}
+            {{ form.observaciones|add_class:"form-control" }}
+            <div class="invalid-feedback">
+                <!-- Mensaje de error para el campo específico -->
+            </div>
+        </div>
+        
+        <h3>Detalles del Reabastecimiento</h3>
+        {{ formset.management_form }}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Crédito</th>
+                    <th>Observaciones</th>
+                    <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for form in formset %}
+                <tr>
+                    <td>{{ form.producto }}</td>
+                    <td>{{ form.cantidad }}</td>
+                    <td>{{ form.credito }}</td>
+                    <td>{{ form.observaciones }}</td>
+                    <td>{{ form.DELETE }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        <a href="{% url 'indexOrdenes' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

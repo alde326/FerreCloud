@@ -61,15 +61,84 @@ def indexVentas(request):
 
 
 
+def obtener_parametro_iva():
+    try:
+        iva_parametro = Parametros.objects.get(nombre="IVA")
+        return Decimal(iva_parametro.porcentaje)
+    except Parametros.DoesNotExist:
+        return None
+
+
+def procesar_carrito(carrito, iva_tasa):
+    total = Decimal('0.00')
+    detalles = []
+    for item in carrito:
+        try:
+            producto = Producto.objects.get(id=item['id'])
+            cantidad = Decimal(item['cantidad'])
+            if producto.cantidad >= cantidad:
+                producto.cantidad -= cantidad
+                producto.save()
+                total += producto.precio * cantidad
+                detalles.append({
+                    'producto': producto,
+                    'cantidad': cantidad,
+                    'precio_unitario': producto.precio
+                })
+            else:
+                return None, f"No hay suficiente inventario para el producto: {producto.nombre}"
+        except Producto.DoesNotExist:
+            return None, f"El producto con ID {item['id']} no existe."
+    return {'total': total, 'detalles': detalles}, None
+
+
+def registrar_cliente(documento, nombre, telefono, email, direccion):
+    cliente, created = Cliente.objects.get_or_create(
+        documento=documento,
+        defaults={
+            'nombre': nombre,
+            'telefono': telefono,
+            'email': email,
+            'direccion': direccion,
+            'nivel': 0,
+        }
+    )
+    return cliente, created
+
+
+def crear_factura(cliente, total, iva, total_con_iva, observacion):
+    return Factura.objects.create(
+        cliente=cliente,
+        total=total,
+        iva=iva,
+        total_con_iva=total_con_iva,
+        observacion=observacion
+    )
+
+
+def crear_detalles_factura(factura, detalles):
+    for detalle in detalles:
+        DetalleFactura.objects.create(
+            factura=factura,
+            producto=detalle['producto'],
+            cantidad=detalle['cantidad'],
+            precio_unitario=detalle['precio_unitario']
+        )
+
+
+def registrar_ingreso(total_con_iva, factura_id):
+    Costos.objects.create(
+        nombre="Venta",
+        ingreso_egreso=True,
+        tipo=Tipos.objects.get(id=6),
+        valor=total_con_iva,
+        descripcion=f"Factura #{factura_id}",
+    )
 
 
 def procesar_formulario(request):
-
-    # Obtén el parámetro de IVA como un objeto único
-    try:
-        iva_parametro = Parametros.objects.get(nombre="IVA")
-        iva_tasa = Decimal(iva_parametro.porcentaje) 
-    except Parametros.DoesNotExist:
+    iva_tasa = obtener_parametro_iva()
+    if iva_tasa is None:
         messages.error(request, 'El parámetro IVA no está configurado.')
         return redirect('indexVentas')
 
@@ -80,89 +149,40 @@ def procesar_formulario(request):
         telefono = request.POST.get('telefono', '')
         direccion = request.POST.get('direccion', '')
         observacion = request.POST.get('observacion', '')
-        carrito = request.POST.get('carrito')
-        
-        carrito = json.loads(carrito)
+        carrito = json.loads(request.POST.get('carrito'))
 
-        # Procesar el carrito y descontar los productos del inventario
-        total = Decimal('0.00')
-        detalles = []
-        for item in carrito:
-            try:
-                producto = Producto.objects.get(id=item['id'])
-                cantidad = Decimal(item['cantidad'])  # Convertir cantidad a Decimal
-                if producto.cantidad >= cantidad:
-                    producto.cantidad -= cantidad
-                    producto.save()
-                    total += producto.precio * cantidad
-                    detalles.append({
-                        'producto': producto,
-                        'cantidad': cantidad,
-                        'precio_unitario': producto.precio
-                    })
-                else:
-                    messages.error(request, f'No hay suficiente cantidad en inventario para el producto: {producto.nombre}')
-                    return redirect('indexVentas')
-            except Producto.DoesNotExist:
-                messages.error(request, f'El producto con ID {item["id"]} no existe.')
-                return redirect('indexVentas')
+        # Procesar el carrito
+        carrito_data, error = procesar_carrito(carrito, iva_tasa)
+        if error:
+            messages.error(request, error)
+            return redirect('indexVentas')
 
-        # Calcular IVA
+        total = carrito_data['total']
+        detalles = carrito_data['detalles']
         iva = total * iva_tasa
         total_con_iva = total + iva
 
-        # Registrar al cliente
-        cliente, created = Cliente.objects.get_or_create(
-            documento=documento,
-            defaults={
-                'nombre': nombre,
-                'telefono': telefono,
-                'email': email,
-                'direccion': direccion,
-                'nivel': 0,
-            }
-        )
-
+        # Registrar cliente
+        cliente, created = registrar_cliente(documento, nombre, telefono, email, direccion)
         if not created:
             messages.info(request, 'Cliente ya existente.')
 
-        # Crear la factura
-        factura = Factura.objects.create(
-            cliente=cliente,
-            total=total,
-            iva=iva,
-            total_con_iva=total_con_iva,
-            observacion=observacion
-        )
+        # Crear factura
+        factura = crear_factura(cliente, total, iva, total_con_iva, observacion)
 
-        # Crear los detalles de la factura
-        for detalle in detalles:
-            DetalleFactura.objects.create(
-                factura=factura,
-                producto=detalle['producto'],
-                cantidad=detalle['cantidad'],
-                precio_unitario=detalle['precio_unitario']
-            )
+        # Crear detalles de la factura
+        crear_detalles_factura(factura, detalles)
 
-        #Crear ingreso
-        Costos.objects.create(
-            nombre = "Venta",
-            ingreso_egreso = True,
-            tipo = Tipos.objects.get(id=6),
-            valor = total_con_iva,
-            descripcion="Factura #" + str(factura.id),
+        # Registrar ingreso
+        registrar_ingreso(total_con_iva, factura.id)
 
-        )
-
-
-        # Construir la URL para ver la factura usando facturaID
+        # Agregar mensaje de éxito
         url_factura = reverse('verFactura', args=[factura.id])
-
-        # Si todo está bien, agregar un mensaje de éxito con el link a la factura
         messages.success(request, f'Venta realizada exitosamente. <a href="{url_factura}">Ver factura</a>.')
         return redirect('indexVentas')
 
     return render(request, 'indexVentas.html')
+
 
 
 

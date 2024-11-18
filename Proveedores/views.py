@@ -135,3 +135,26 @@ def crearReabastecimiento(request):
 
 
 
+def editar_reabastecimiento(request, orden_id):
+    reabastecimiento = get_object_or_404(Reabastecimiento, id=orden_id)
+
+    if request.method == 'POST':
+        form = ReabastecimientoForm(request.POST, instance=reabastecimiento)
+        formset = ReabastecimientoDetalleFormSet(request.POST, instance=reabastecimiento)
+        
+        if form.is_valid() and formset.is_valid():
+            form.save()
+            formset.save()
+            return redirect('indexOrdenes')
+    else:
+        form = ReabastecimientoForm(instance=reabastecimiento)
+        formset = ReabastecimientoDetalleFormSet(instance=reabastecimiento)
+
+    return render(request, 'editOrdenes.html', {'form': form, 'formset': formset})
+
+
+
+
+
+
+

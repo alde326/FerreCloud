@@ -42,7 +42,7 @@ Proveedores
                     <tr>
                         <th>Estado</th>
                         <th>ID</th>
-                        <th>Fecha de la orden</th>
+                        <th>Fecha de la orden</th> 
                         <th>Proveedor</th>
                         <th>Fecha de entrega</th>
                         <th>Credito</th>
@@ -61,7 +61,7 @@ Proveedores
                         <td>{{ orden.nombreContacto }}</td>
                         <td>
                             <!-- Aquí puedes poner enlaces para editar o eliminar el empleado -->
-                            <a href="#" class="btn btn-sm btn-primary">Editar</a>
+                            <a href="{% url 'editarReabastecimineto' orden.id %}" class="btn btn-sm btn-primary">Editar</a>
                             <a href="#" class="btn btn-sm btn-danger">Eliminar</a>
                         </td>
                     </tr>
