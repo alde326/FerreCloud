@@ -114,15 +114,6 @@ WSGI_APPLICATION = 'FerreCloud.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    '''default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ferrecloud',
-        'USER': 'super',
-        'PASSWORD': 'univalle2024',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }'''
-
     'default': dj_database_url.config(
         # Replace this value with your local database's connection string.
         default='postgresql://super:univalle2024@localhost:5432/ferrecloud',
