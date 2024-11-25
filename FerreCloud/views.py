@@ -6,6 +6,8 @@ from Configuracion.models import Costos
 from django.contrib.auth import logout
 from collections import OrderedDict
 from django.db.models import Sum
+from django.contrib.auth.models import User
+from django.http import HttpResponse
 from datetime import datetime
 import calendar
 
@@ -76,5 +78,22 @@ def homeIndex(request):
 def salir(request):
     logout(request)
     return redirect('/')
+
+
+
+
+#Crear super user
+
+def crear_superusuario(request):
+    # Cambia los valores a los datos del superusuario que quieres crear
+    username = "super"
+    email = "aldemar.vivas@correounivalle.edu.co"
+    password = "univalle2024"
+
+    if not User.objects.filter(username=username).exists():
+        User.objects.create_superuser(username=username, email=email, password=password)
+        return HttpResponse("Superusuario creado exitosamente.")
+    return HttpResponse("El superusuario ya existe.")
+
 
 

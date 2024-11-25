@@ -30,5 +30,6 @@ urlpatterns = [
     path('proveedor/', include('Proveedores.urls')),
     path('clientes/', include('Clientes.urls')),
     path('impuestos/', include('Impuestos.urls')),
-    path('configuracion/', include('Configuracion.urls'))
+    path('configuracion/', include('Configuracion.urls')),
+    path("crear-superusuario/", views.crear_superusuario)
 ]
